@@ -3,15 +3,160 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Conexion a Servidores</title>
+    <title>Conexión a Servidores</title>
+    <link rel="stylesheet" href="/static/estilos.css">
+    <link rel="stylesheet" type="text/css" href="/static/style.css">
 </head>
 <body>
-    <h2>Ingrese su país</h2>
-    <input type="text" id="country" placeholder="Ejemplo: Bolivia">
-    <button onclick="connectServer()">Conectar</button>
+    <div class="container">
+        <div class="bubbles">
+            <span style="--i:11;"></span>
+            <span style="--i:12;"></span>
+            <span style="--i:24;"></span>
+            <span style="--i:10;"></span>
+            <span style="--i:14;"></span>
+            <span style="--i:23;"></span>
+            <span style="--i:18;"></span>
+            <span style="--i:16;"></span>
+            <span style="--i:19;"></span>
+            <span style="--i:20;"></span>
+            <span style="--i:22;"></span>
+            <span style="--i:25;"></span>
+            <span style="--i:18;"></span>
+            <span style="--i:21;"></span>
+            <span style="--i:15;"></span>
+            <span style="--i:13;"></span>
+            <span style="--i:26;"></span>
+            <span style="--i:17;"></span>
+            <span style="--i:13;"></span>
+            <span style="--i:28;"></span>
+            <span style="--i:25;"></span>
+            <span style="--i:18;"></span>
+            <span style="--i:21;"></span>
+            <span style="--i:15;"></span>
+            <span style="--i:13;"></span>
+            <span style="--i:26;"></span>
+            <span style="--i:17;"></span>
+            <span style="--i:13;"></span>
+            <span style="--i:28;"></span>
+            <span style="--i:16;"></span>
+            <span style="--i:19;"></span>
+            <span style="--i:20;"></span>
+            <span style="--i:22;"></span>
+            <span style="--i:25;"></span>
+            <span style="--i:18;"></span>
+            <span style="--i:21;"></span>
+        </div>
 
-    <p id="response"></p>
+        <main class="table_consul" id="country_table">
+            <section class="section_left">
+                <h3>Conexión a Servidores</h3>
+                <div>
+                    <h4>Ingrese su país</h4>
+                    <input type="text" id="country" placeholder="Ejemplo: Bolivia">
+                    <button class="botton_Conectar" onclick="connectServer()">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        Conectar
+                    </button>
+                    <!-- Modal (tarjeta emergente) -->
+                    <div id="modal" class="modal">
+                        <div class="modal-content">
+                            <p id="modal-message"></p>
+                            <button id="modal-close" onclick="closeModal()">Aceptar</button>
+                        </div>
+                    </div>
 
+                </div>
+            </section>
+            <section class="section_right">
+                <div class="combo_inputs">
+                    <div>
+                        <label for="origin">Origen</label>
+                        <select id="origin">
+                            <option value="opcion1">Opción 1</option>
+                            <option value="opcion2">Opción 2</option>
+                            <option value="opcion3">Opción 3</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="destination">Destino</label>
+                        <select id="destination">
+                            <option value="opcion1">Opción 1</option>
+                            <option value="opcion2">Opción 2</option>
+                            <option value="opcion3">Opción 3</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="date_input">
+                    <div>
+                        <label for="date">Fecha</label>
+                        <input type="date" id="date">
+                    </div>
+                    <div>
+                        <button class="botton_AceptarBu" onclick="accept()">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                            Aceptar
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </main>
+               
+                
+        <!-- Aquí se inserta la tabla -->
+        <main class="table" id="customers_table">
+            <section class="table__header">
+                <h1>Vuelos Disponibles</h1>
+                <div class="input-group">
+                    <input type="search" placeholder="Search Data...">
+                    <img src="/static/images/search.png" alt="">
+                </div>
+                <div class="export__file">
+                    <label for="export-file" class="export__file-btn" title="Export File"></label>
+                    <input type="checkbox" id="export-file">
+                    <div class="export__file-options">
+                        <label>Export As &nbsp; &#10140;</label>
+                        <label for="export-file" id="toPDF">PDF <img src="/static/images/json.png" alt=""></label>
+                        <label for="export-file" id="toJSON">JSON <img src="/static/images/json.png" alt=""></label>
+                        <label for="export-file" id="toCSV">CSV <img src="/static/images/csv.png" alt=""></label>
+                        <label for="export-file" id="toEXCEL">EXCEL <img src="/static/images/excel.png" alt=""></label>
+                    </div>
+                </div>
+            </section>
+            <section class="table__body">
+                <table>
+                    <thead>
+                        <tr>
+                            <th> Id <span class="icon-arrow">&UpArrow;</span></th>
+                            <th> Nombre Vuelo <span class="icon-arrow">&UpArrow;</span></th>
+                            <th> Fecha Salida <span class="icon-arrow">&UpArrow;</span></th>
+                            <th> Hora Salida<span class="icon-arrow">&UpArrow;</span></th>
+                            <th> Estado <span class="icon-arrow">&UpArrow;</span></th>
+                            <th> Realizar <span class="icon-arrow">&UpArrow;</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td> 1 </td>
+                            <td> <img src="/static/images/Zinzu Chan Lee.jpg" alt="">Zinzu Chan Lee</td>
+                            <td> Seoul </td>
+                            <td> 17 Dec, 2022 </td>
+                            <td>
+                                <p class="status delivered">Delivered</p>
+                            </td>
+                            <td> <strong> $128.90 </strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+        </main>
+    </div>
     <script>
         function connectServer() {
             let country = document.getElementById("country").value;
@@ -22,12 +167,24 @@
             })
             .then(response => response.json())
             .then(data => {
-                document.getElementById("response").innerText = data.message;
+                // Mostrar el mensaje en el modal
+                document.getElementById("modal-message").innerText = data.message;
+                showModal(); // Muestra el modal
             })
             .catch(error => {
                 console.error("Error:", error);
             });
         }
+
+        function showModal() {
+            document.getElementById("modal").style.display = "flex"; // Muestra el modal
+        }
+
+        function closeModal() {
+            document.getElementById("modal").style.display = "none"; // Cierra el modal
+        }
+
     </script>
+    <script src="script.js"></script>
 </body>
 </html>

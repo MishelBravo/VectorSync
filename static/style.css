@@ -1,0 +1,661 @@
+* {
+    margin: 0;
+    padding: 0;
+
+    box-sizing: border-box;
+    font-family: sans-serif;
+}
+@media print {
+ .table, .table__body {
+  overflow: visible;
+  height: auto !important;
+  width: auto !important;
+ }
+}
+
+main.table {
+    width: 82vw;
+    height: 70vh;
+    background-color: #fff5;
+
+    backdrop-filter: blur(7px);
+    box-shadow: 0 .4rem .8rem #0005;
+    border-radius: .8rem;
+
+    overflow: hidden;
+
+    /* Mueve la tabla más a la derecha */
+    margin-left: 9vw; /* Ajusta este valor según lo necesites */
+    margin-top: 2vw;
+}
+
+.table__header {
+    width: 100%;
+    height: 10%;
+    background-color: #fff4;
+    padding: .8rem 1rem;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.table__header .input-group {
+    width: 35%;
+    height: 100%;
+    background-color: #fff5;
+    padding: 0 .8rem;
+    border-radius: 2rem;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    transition: .2s;
+}
+
+.table__header .input-group:hover {
+    width: 45%;
+    background-color: #fff8;
+    box-shadow: 0 .1rem .4rem #0002;
+}
+
+.table__header .input-group img {
+    width: 1.2rem;
+    height: 1.2rem;
+}
+
+.table__header .input-group input {
+    width: 100%;
+    padding: 0 .5rem 0 .3rem;
+    background-color: transparent;
+    border: none;
+    outline: none;
+}
+
+.table__body {
+    width: 95%;
+    max-height: calc(89% - 1.6rem);
+    background-color: #fffb;
+
+    margin: .8rem auto;
+    border-radius: .6rem;
+
+    overflow: auto;
+    overflow: overlay;
+}
+
+
+.table__body::-webkit-scrollbar{
+    width: 0.5rem;
+    height: 0.5rem;
+}
+
+.table__body::-webkit-scrollbar-thumb{
+    border-radius: .5rem;
+    background-color: #0004;
+    visibility: hidden;
+}
+
+.table__body:hover::-webkit-scrollbar-thumb{ 
+    visibility: visible;
+}
+
+
+table {
+    width: 100%;
+}
+
+td img {
+    width: 36px;
+    height: 36px;
+    margin-right: .5rem;
+    border-radius: 50%;
+
+    vertical-align: middle;
+}
+
+table, th, td {
+    border-collapse: collapse;
+    padding: 1rem;
+    text-align: left;
+}
+
+thead th {
+    position: sticky;
+    top: 0;
+    left: 0;
+    background-color: #d5d1defe;
+    cursor: pointer;
+    text-transform: capitalize;
+}
+
+tbody tr:nth-child(even) {
+    background-color: #0000000b;
+}
+
+tbody tr {
+    --delay: .1s;
+    transition: .5s ease-in-out var(--delay), background-color 0s;
+}
+
+tbody tr.hide {
+    opacity: 0;
+    transform: translateX(100%);
+}
+
+tbody tr:hover {
+    background-color: #fff6 !important;
+}
+
+tbody tr td,
+tbody tr td p,
+tbody tr td img {
+    transition: .2s ease-in-out;
+}
+
+tbody tr.hide td,
+tbody tr.hide td p {
+    padding: 0;
+    font: 0 / 0 sans-serif;
+    transition: .2s ease-in-out .5s;
+}
+
+tbody tr.hide td img {
+    width: 0;
+    height: 0;
+    transition: .2s ease-in-out .5s;
+}
+
+.status {
+    padding: .4rem 0;
+    border-radius: 2rem;
+    text-align: center;
+}
+
+.status.delivered {
+    background-color: #86e49d;
+    color: #006b21;
+}
+
+.status.cancelled {
+    background-color: #d893a3;
+    color: #b30021;
+}
+
+.status.pending {
+    background-color: #ebc474;
+}
+
+.status.shipped {
+    background-color: #6fcaea;
+}
+
+
+@media (max-width: 1000px) {
+    td:not(:first-of-type) {
+        min-width: 12.1rem;
+    }
+}
+
+thead th span.icon-arrow {
+    display: inline-block;
+    width: 1.3rem;
+    height: 1.3rem;
+    border-radius: 50%;
+    border: 1.4px solid transparent;
+    
+    text-align: center;
+    font-size: 1rem;
+    
+    margin-left: .5rem;
+    transition: .2s ease-in-out;
+}
+
+thead th:hover span.icon-arrow{
+    border: 1.4px solid #6c00bd;
+}
+
+thead th:hover {
+    color: #6c00bd;
+}
+
+thead th.active span.icon-arrow{
+    background-color: #6c00bd;
+    color: #fff;
+}
+
+thead th.asc span.icon-arrow{
+    transform: rotate(180deg);
+}
+
+thead th.active,tbody td.active {
+    color: #6c00bd;
+}
+
+.export__file {
+    position: relative;
+}
+
+.export__file .export__file-btn {
+    display: inline-block;
+    width: 2rem;
+    height: 2rem;
+    background: #fff6 url(images/export.png) center / 80% no-repeat;
+    border-radius: 50%;
+    transition: .2s ease-in-out;
+}
+
+.export__file .export__file-btn:hover { 
+    background-color: #fff;
+    transform: scale(1.15);
+    cursor: pointer;
+}
+
+.export__file input {
+    display: none;
+}
+
+.export__file .export__file-options {
+    position: absolute;
+    right: 0;
+    
+    width: 12rem;
+    border-radius: .5rem;
+    overflow: hidden;
+    text-align: center;
+
+    opacity: 0;
+    transform: scale(.8);
+    transform-origin: top right;
+    
+    box-shadow: 0 .2rem .5rem #0004;
+    
+    transition: .2s;
+}
+
+.export__file input:checked + .export__file-options {
+    opacity: 1;
+    transform: scale(1);
+    z-index: 100;
+}
+
+.export__file .export__file-options label{
+    display: block;
+    width: 100%;
+    padding: .6rem 0;
+    background-color: #f2f2f2;
+    
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+
+    transition: .2s ease-in-out;
+}
+
+.export__file .export__file-options label:first-of-type{
+    padding: 1rem 0;
+    background-color: #86e49d !important;
+}
+
+.export__file .export__file-options label:hover{
+    transform: scale(1.05);
+    background-color: #fff;
+    cursor: pointer;
+}
+
+.export__file .export__file-options img{
+    width: 2rem;
+    height: auto;
+}
+
+
+/*Cabeceza*/
+main.table_consul {
+    width: 90vw;
+    height: 21vh; /* Ajusté la altura para dar más espacio */
+    background-color: #fff5;
+
+    backdrop-filter: blur(7px);
+    box-shadow: 0 .4rem .8rem #0005;
+    border-radius: .8rem;
+
+    overflow: hidden;
+
+    margin-left: 5vw; /* Ajusta este valor según lo necesites */
+    margin-top: -1vw;
+    display: flex;
+    justify-content: space-between; /* Esto alinea las secciones a la izquierda y derecha */
+    padding: 1rem; /* Añadido un pequeño espaciado */
+}
+
+/* Estilo para las secciones dentro del contenedor principal */
+main.table_consul section {
+    display: flex;
+    flex-direction: column;
+    gap: -1rem;  /* Ajusta la separación entre los elementos */
+    width: 48%; /* Ajusta el tamaño para que encaje mejor en la pantalla */
+    margin-top: -1vw;
+}
+
+/* Sección izquierda (Conexión a Servidores) */
+.section_left {
+    width: 100%;
+}
+
+/* Sección derecha (Campos de Origen, Destino y Fecha) */
+.section_right {
+    width: 100%;
+}
+
+/* Estilo para los inputs y select */
+input[type="text"], input[type="date"], select {
+    width: 100%;
+    padding: 0.3rem; /* Reducido el padding para optimizar el espacio */
+    border-radius: 0.5rem;
+    border: 1px solid #ccc;
+    font-size: -1   rem; /* Ajuste de tamaño de texto */
+}
+
+
+/* Estilo para los botones */
+.botton_AceptarBu {
+    width: 200px;
+    height: 35px;
+    padding: 0.2rem; /* Reducido el padding para optimizar el espacio */
+    border-radius: 0.5rem;
+    cursor: pointer;
+    background-color: #864caf;
+    color: white;
+    border: none;
+    font-size: -1rem; /* Ajuste de tamaño de texto */
+    margin-top: 0.8vw;
+    margin-left: 33px; /* Empuja el botón hacia la derecha */
+    display: block; /* Asegura que el margin-left: auto funcione correctamente */
+
+}
+
+/* Estilo para los labels */
+label {
+    font-weight: bold;
+    font-size: -1rem; /* Ajuste de tamaño de texto */
+}
+
+/* Ajuste visual de los contenedores de los select y fecha */
+.combo_inputs {
+    display: flex;
+    gap: 1rem;
+}
+
+.combo_inputs div {
+    flex: 1;
+}
+
+.date_input {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.date_input div {
+    flex: 1;
+}
+
+/* Estilos para el Modal */
+.modal {
+    display: none; /* Inicialmente está oculto */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro */
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    border-radius: 1rem; /* Agregado borde redondeado al modal */
+}
+
+.modal-content {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 0.5rem; /* Borde redondeado del contenido */
+    text-align: center;
+    width: 300px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+#modal-close {
+    margin-top: 1rem;
+    padding: 0.6rem;
+    border: none;
+    background-color: #a45ab5;
+    color: white;
+    border-radius: 0.3rem; /* Borde redondeado en el botón */
+    cursor: pointer;
+}
+
+/* Estilos para el botón */
+.botton_Conectar {
+    position: relative;
+    display: inline-block;
+    width: 200px; /* Ancho ajustado */
+    height: 35px; /* Alto ajustado */
+    padding: 0.2rem; /* Padding ajustado */
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    color: white;
+    font-size: 1rem; /* Ajuste de tamaño de texto */
+    background-color: #03e8f45d; /* Fondo verde */
+    border-radius: 0.5rem; /* Bordes redondeados */
+    cursor: pointer;
+    border: none;
+    overflow: hidden;
+    transition: .5s;
+    margin-top: 0.5vw;
+    margin-left: 170px; /* Empuja el botón hacia la derecha */
+}
+
+.botton_Conectar:hover {
+    background-color: #03e9f4; /* Cambio de color al hacer hover */
+    color: #050801;
+    box-shadow: 0 0 5px #03e9f4,
+                0 0 25px #03e9f4,
+                0 0 50px #03e9f4,
+                0 0 300px #03e9f4;
+    -webkit-box-reflect: below 1px linear-gradient(transparent, #0005);
+}
+
+/* Animación de bordes */
+.botton_Conectar span {
+    position: absolute;
+    display: block;
+}
+
+.botton_Conectar span:nth-child(1) {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #03e9f4);
+    animation: animate1 1s infinite;
+}
+
+@keyframes animate1 {
+    0% {
+        left: -100%;
+    }
+    100% {
+        left: 100%;
+    }
+}
+
+.botton_Conectar span:nth-child(2) {
+    top: -100%;
+    right: 0;
+    width: 1px;
+    height: 100%;
+    background: linear-gradient(180deg, transparent, #03e9f4);
+    animation: animate2 1s infinite;
+    animation-delay: .25s;
+}
+
+@keyframes animate2 {
+    0% {
+        top: -100%;
+    }
+    100% {
+        top: 100%;
+    }
+}
+
+.botton_Conectar span:nth-child(3) {
+    bottom: 0;
+    right: 0;
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(270deg, transparent, #03e9f4);
+    animation: animate3 1s infinite;
+    animation-delay: .5s;
+}
+
+@keyframes animate3 {
+    0% {
+        right: -100%;
+    }
+    100% {
+        right: 100%;
+    }
+}
+
+.botton_Conectar span:nth-child(4) {
+    bottom: -100%;
+    left: 0;
+    width: 1px;
+    height: 100%;
+    background: linear-gradient(360deg, transparent, #03e9f4);
+    animation: animate4 1s infinite;
+    animation-delay: .75s;
+}
+
+@keyframes animate4 {
+    0% {
+        bottom: -100%;
+    }
+    100% {
+        bottom: 100%;
+    }
+}
+
+
+/* Estilos para el botón Aceptar */
+.botton_AceptarBu {
+    position: relative;
+    display: inline-block;
+    width: 200px; /* Ancho ajustado */
+    height: 35px; /* Alto ajustado */
+    padding: 0.2rem; /* Padding ajustado */
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    color: white;
+    font-size: 1rem; /* Ajuste de tamaño de texto */
+    background-color: #1bf40353; /* Fondo morado */
+    border-radius: 0.5rem; /* Bordes redondeados */
+    cursor: pointer;
+    border: none;
+    overflow: hidden;
+    transition: .5s;
+    margin-top: 0.8vw;
+    margin-left: 33px; /* Empuja el botón hacia la derecha */
+}
+
+.botton_AceptarBu:hover {
+    background-color: #1bf403; /* Cambio de color al hacer hover */
+    color: #050801;
+    box-shadow: 0 0 5px #1bf403,
+                0 0 25px #1bf403,
+                0 0 50px #1bf403,
+                0 0 300px #1bf403;
+    -webkit-box-reflect: below 1px linear-gradient(transparent, #0005);
+}
+
+/* Animación de bordes */
+.botton_AceptarBu span {
+    position: absolute;
+    display: block;
+}
+
+.botton_AceptarBu span:nth-child(1) {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #1bf403);
+    animation: animate1 1s infinite;
+}
+
+@keyframes animate1 {
+    0% {
+        left: -100%;
+    }
+    100% {
+        left: 100%;
+    }
+}
+
+.botton_AceptarBu span:nth-child(2) {
+    top: -100%;
+    right: 0;
+    width: 1px;
+    height: 100%;
+    background: linear-gradient(180deg, transparent, #1bf403);
+    animation: animate2 1s infinite;
+    animation-delay: .25s;
+}
+
+@keyframes animate2 {
+    0% {
+        top: -100%;
+    }
+    100% {
+        top: 100%;
+    }
+}
+
+.botton_AceptarBu span:nth-child(3) {
+    bottom: 0;
+    right: 0;
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(270deg, transparent, #1bf403);
+    animation: animate3 1s infinite;
+    animation-delay: .5s;
+}
+
+@keyframes animate3 {
+    0% {
+        right: -100%;
+    }
+    100% {
+        right: 100%;
+    }
+}
+
+.botton_AceptarBu span:nth-child(4) {
+    bottom: -100%;
+    left: 0;
+    width: 1px;
+    height: 100%;
+    background: linear-gradient(360deg, transparent, #1bf403);
+    animation: animate4 1s infinite;
+    animation-delay: .75s;
+}
+
+@keyframes animate4 {
+    0% {
+        bottom: -100%;
+    }
+    100% {
+        bottom: 100%;
+    }
+}
