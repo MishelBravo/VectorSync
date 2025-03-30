@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conexion a Servidores</title>
+</head>
+<body>
+    <h2>Ingrese su país</h2>
+    <input type="text" id="country" placeholder="Ejemplo: Bolivia">
+    <button onclick="connectServer()">Conectar</button>
+
+    <p id="response"></p>
+
+    <script>
+        function connectServer() {
+            let country = document.getElementById("country").value;
+            fetch('/connect', {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ country: country })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("response").innerText = data.message;
+            })
+            .catch(error => {
+                console.error("Error:", error);
+            });
+        }
+    </script>
+</body>
+</html>
