@@ -31,8 +31,10 @@ def connect_to_mysql(database_name):
         return None
 
 # Crear conexiones simultáneas
-conn_mysql_a = connect_to_mysql("dbaeropuerto_a")  # Base de datos en Europa
-conn_mysql_c = connect_to_mysql("dbaeropuerto_c")  # Base de datos en América
+conn_mysql_a = connect_to_mysql("dbaeropuerto_a")  # Base de datos en Norteamérica (asumido)
+conn_mysql_c = connect_to_mysql("dbaeropuerto_c")  # Base de datos en Sudamérica
+# Firebase debe estar en Europa
+firebase_db = None  # Firebase no necesita conexión en este caso.
 
 # 🔹 Implementación de Relojes Vectoriales para sincronización
 vector_clock = {"dbaeropuerto_a": 0, "dbaeropuerto_b": 0, "dbaeropuerto_c": 0}
@@ -56,19 +58,81 @@ sync_thread = threading.Thread(target=sync_data)
 sync_thread.daemon = True
 sync_thread.start()
 
+# 🔹 Diccionario actualizado de países por continente
+countries = {
+    "África": [
+        "Argelia", "Angola", "Benín", "Botsuana", "Burkina Faso", "Burundi", "Cabo Verde", 
+        "Camerún", "República Centroafricana", "Chad", "Comoras", "Congo", "República Democrática del Congo", 
+        "Costa de Marfil", "Djibouti", "Egipto", "Guinea Ecuatorial", "Eritrea", "Esuatini", "Etiopía", 
+        "Gabón", "Gambia", "Ghana", "Guinea", "Guinea-Bisáu", "Kenia", "Lesoto", "Liberia", "Libia", 
+        "Madagascar", "Malawi", "Malí", "Mauricio", "Mauritania", "Mozambique", "Namibia", "Níger", "Nigeria", 
+        "Ruanda", "Santo Tomé y Príncipe", "Senegal", "Seychelles", "Sierra Leona", "Somalia", "Sudáfrica", 
+        "Sudán", "Tanzania", "Togo", "Túnez", "Uganda", "Zambia", "Zimbabue"
+    ],
+    "Asia": [
+        "Afganistán", "Armenia", "Azerbaiyán", "Bahrein", "Bangladés", "Birmania (Myanmar)", "Bután", "Brunéi", 
+        "Camboya", "China", "Chipre", "Corea del Norte", "Corea del Sur", "Emiratos Árabes Unidos", 
+        "Georgia", "India", "Indonesia", "Irak", "Irán", "Israel", "Japón", "Jordania", "Kazajistán", 
+        "Kenia", "Kuwait", "Kirgistán", "Laos", "Líbano", "Malasia", "Maldivas", "Mongolia", "Nepal", "Omán", 
+        "Pakistán", "Palestina", "Filipinas", "Qatar", "Rusia", "Arabia Saudita", "Singapur", "Sri Lanka", 
+        "Siria", "Tayikistán", "Tailandia", "Timor Oriental", "Turkmenistán", "Emiratos Árabes Unidos", 
+        "Uzbekistán", "Vietnam", "Yemen"
+    ],
+    "Europa": [
+        "Albania", "Alemania", "Andorra", "Armenia", "Austria", "Bélgica", "Bielorrusia", "Bosnia y Herzegovina", 
+        "Bulgaria", "Chipre", "Croacia", "Dinamarca", "Eslovaquia", "Eslovenia", "España", "Estonia", "Finlandia", 
+        "Francia", "Georgia", "Grecia", "Hungría", "Irlanda", "Islandia", "Italia", "Kazajistán", "Kosovo", 
+        "Letonia", "Liechtenstein", "Lituania", "Luxemburgo", "Malta", "Moldavia", "Mónaco", "Montenegro", "Noruega", 
+        "Países Bajos", "Polonia", "Portugal", "Reino Unido", "República Checa", "Rumanía", "San Marino", "Serbia", 
+        "Suecia", "Suiza", "Ucrania"
+    ],
+    "América del Sur": [
+        "Argentina", "Bolivia", "Brasil", "Chile", "Colombia", "Ecuador", "Guyana", "Paraguay", "Perú", "Surinam", 
+        "Uruguay", "Venezuela"
+    ],
+    "América del Norte": [
+        "Canadá", "Estados Unidos", "México"
+    ],
+    "Oceanía": [
+        "Australia", "Fiyi", "Islas Marshall", "Micronesia", "Nauru", "Nueva Zelanda", "Palau", "Papúa Nueva Guinea", 
+        "Samoa", "Islas Salomón", "Tonga", "Tuvalu", "Vanuatu"
+    ],
+    "Antártida": [
+        "Antártida"
+    ]
+}
+
+# Función que determina el servidor más cercano según el país
+def get_server_for_country(country):
+    # Recorremos el diccionario de países por continente
+    for continent, countries_list in countries.items():
+        if country in countries_list:
+            # Si el país está en América del Norte, usa dbaeropuerto_a
+            if continent == "América del Norte":
+                return "Conectando a dbaeropuerto_a (MySQL) en América del Norte"
+            # Si el país está en América del Sur, usa dbaeropuerto_c
+            elif continent == "América del Sur":
+                return "Conectando a dbaeropuerto_c (MySQL) en América del Sur"
+            # Si el país está en Europa, usa dbaeropuerto_b
+            elif continent == "Europa":
+                return "Conectando a dbaeropuerto_b (Firebase) en Europa"
+            # Si el país no está en los continentes definidos
+            else:
+                return "No hay servidor disponible para este continente"
+    
+    # Si el país no se encuentra en ninguna lista de continentes
+    return "País no reconocido"
+
+# Ejemplo de uso
+country_input = "España"  # Ejemplo de país
+server_connection = get_server_for_country(country_input)
+print(server_connection)
+
 # 🔹 Ruta para determinar la base de datos a utilizar
 @app.route('/connect', methods=['POST'])
 def connect():
     country = request.json.get('country')
     continent = None
-
-    # Definir los países por continente
-    countries = {
-        "Europa": ["España", "Francia", "Alemania", "Italia", "Polonia"],
-        "Asia": ["China", "India", "Japón", "Corea del Sur", "Vietnam"],
-        "América del Sur": ["Argentina", "Brasil", "Chile", "Bolivia", "Perú"],
-        "América del Norte": ["Estados Unidos", "Canadá", "México"],
-    }
 
     # Identificar continente
     for cont, country_list in countries.items():
@@ -78,17 +142,24 @@ def connect():
 
     response = {"message": ""}
 
-    # Conectar a la base de datos según la ubicación del usuario
+    # Determinar a qué servidor conectar
     if continent == "Europa":
-        if conn_mysql_a:
-            response["message"] = f"Conectado a la base de datos dbaeropuerto_a (Europa)."
+        response["message"] = f"Conectado a Firebase dbaeropuerto_b (Europa)."
     elif continent == "Asia":
         response["message"] = f"Conectado a Firebase dbaeropuerto_b (Asia)."
-    elif continent in ["América del Sur", "América del Norte"]:
+    elif continent == "América del Sur":
         if conn_mysql_c:
-            response["message"] = f"Conectado a la base de datos dbaeropuerto_c (América)."
+            response["message"] = f"Conectado a la base de datos dbaeropuerto_c (Sudamérica) (MySQL)."
+    elif continent == "América del Norte":
+        if conn_mysql_a:
+            response["message"] = f"Conectado a la base de datos dbaeropuerto_a (Norteamérica) (MySQL)."
+    elif continent == "África":
+        response["message"] = f"Conectado a la base de datos dbaeropuerto_a (África)Norteamérica(MySQL)."
+    elif continent == "Antártida":
+        response["message"] = f"No hay servidores disponibles para la Antártida."
     else:
         return jsonify({"message": "País no encontrado. Verifica el nombre."}), 400
+
 
     return jsonify(response)
 
