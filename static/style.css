@@ -659,3 +659,121 @@ label {
         bottom: 100%;
     }
 }
+
+
+
+/* Estilos para el botón Informacion vuelo */
+.botton_info {
+    position: relative;
+    display: inline-flex; /* Usamos flexbox */
+    justify-content: center; /* Centra el contenido horizontalmente */
+    align-items: center; /* Centra el contenido verticalmente */
+    width: 200px; /* Ancho ajustado */
+    height: 35px; /* Alto ajustado */
+    padding: 0.2rem; /* Padding ajustado */
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    color: white;
+    font-size: 1rem; /* Ajuste de tamaño de texto */
+    background-color: #0254b15b; /* Fondo morado */
+    border-radius: 0.5rem; /* Bordes redondeados */
+    cursor: pointer;
+    border: none;
+    overflow: hidden;
+    transition: .5s;
+    margin-top: 0.8vw;
+    margin-left: 33px; /* Empuja el botón hacia la derecha */
+    text-decoration: none;
+}
+
+
+.botton_info:hover {
+    background-color: #0373f4; /* Cambio de color al hacer hover */
+    color: #050801;
+    box-shadow: 0 0 5px #0373f4,
+                0 0 25px #0373f4,
+                0 0 50px #0373f4,
+                0 0 300px #0373f4;
+    -webkit-box-reflect: below 1px linear-gradient(transparent, #0005);
+}
+
+/* Animación de bordes */
+.botton_info span {
+    position: absolute;
+    display: block;
+}
+
+.botton_info span:nth-child(1) {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #0373f4);
+    animation: animate1 1s infinite;
+}
+
+@keyframes animate1 {
+    0% {
+        left: -100%;
+    }
+    100% {
+        left: 100%;
+    }
+}
+
+.botton_info span:nth-child(2) {
+    top: -100%;
+    right: 0;
+    width: 1px;
+    height: 100%;
+    background: linear-gradient(180deg, transparent, #0373f4);
+    animation: animate2 1s infinite;
+    animation-delay: .25s;
+}
+
+@keyframes animate2 {
+    0% {
+        top: -100%;
+    }
+    100% {
+        top: 100%;
+    }
+}
+
+.botton_info span:nth-child(3) {
+    bottom: 0;
+    right: 0;
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(270deg, transparent, #0373f4);
+    animation: animate3 1s infinite;
+    animation-delay: .5s;
+}
+
+@keyframes animate3 {
+    0% {
+        right: -100%;
+    }
+    100% {
+        right: 100%;
+    }
+}
+
+.botton_info span:nth-child(4) {
+    bottom: -100%;
+    left: 0;
+    width: 1px;
+    height: 100%;
+    background: linear-gradient(360deg, transparent, #0373f4);
+    animation: animate4 1s infinite;
+    animation-delay: .75s;
+}
+
+@keyframes animate4 {
+    0% {
+        bottom: -100%;
+    }
+    100% {
+        bottom: 100%;
+    }
+}

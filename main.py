@@ -218,6 +218,15 @@ def buscar_vuelos():
 
 #----------------------------------------------------------------------------------------------------------------------------------------------
 
+@app.route('/info')
+def info_vuelo():
+    id_vuelo = request.args.get('id')
+    # Aquí puedes hacer algo con el id_vuelo, como consultar la base de datos
+    return render_template('info.html', id_vuelo=id_vuelo)
+
+
+#----------------------------------------------------------------------------------------------------------------------------------------------
+
 # Ejecutar la consulta al iniciar la aplicación y antes de cada solicitud
 @app.before_request
 def before_request():

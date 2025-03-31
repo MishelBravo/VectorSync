@@ -113,7 +113,7 @@
                     <input type="search" placeholder="Search Data...">
                     <img src="/static/images/search.png" alt="">
                 </div>
-                <div class="export__file">
+                <!--<div class="export__file">
                     <label for="export-file" class="export__file-btn" title="Export File"></label>
                     <input type="checkbox" id="export-file">
                     <div class="export__file-options">
@@ -123,7 +123,7 @@
                         <label for="export-file" id="toCSV">CSV <img src="/static/images/csv.png" alt=""></label>
                         <label for="export-file" id="toEXCEL">EXCEL <img src="/static/images/excel.png" alt=""></label>
                     </div>
-                </div>
+                </div>-->
             </section>
             <section class="table__body">
                 <table>
@@ -138,16 +138,8 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for vuelo in vuelos %}
-                        <tr>
-                            <td>{{ vuelo.idVuelo }}</td>
-                            <td>{{ vuelo.nombreVuelo }}</td>
-                            <td>{{ vuelo.fechaSalida }}</td>
-                            <td>{{ vuelo.horaSalida }}</td>
-                            <td><p class="status">{{ vuelo.estado }}</p></td>
-                            <td><strong>{{ vuelo.precio }}</strong></td>
-                        </tr>
-                        {% endfor %}
+                        
+                        
                     </tbody>
                 </table>
             </section>
@@ -209,6 +201,7 @@
                         <td>${flight.fechaSalida}</td>
                         <td>${flight.horaSalida}</td>
                         <td><p class="status">${flight.estado}</p></td>
+                        <td> <a href="/info?id=${flight.idVuelo}" class="botton_info">Ver Detalles</a> </td>
                     </tr>`;
                     tableBody.innerHTML += row;
                 });
