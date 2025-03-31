@@ -55,10 +55,6 @@
                     <h4>Ingrese su país</h4>
                     <input type="text" id="country" placeholder="Ejemplo: Bolivia">
                     <button class="botton_Conectar" onclick="connectServer()">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                        <span></span>
                         Conectar
                     </button>
                     <!-- Modal (tarjeta emergente) -->
@@ -76,17 +72,21 @@
                     <div>
                         <label for="origin">Origen</label>
                         <select id="origin">
-                            <option value="opcion1">Opción 1</option>
-                            <option value="opcion2">Opción 2</option>
-                            <option value="opcion3">Opción 3</option>
+                            <option value="">Seleccione Origen</option>
+                            <!-- Llenar las opciones con los datos de los aeropuertos de origen -->
+                            {% for airport in airports['origen'] %}
+                                <option value="{{ airport }}">{{ airport }}</option>
+                            {% endfor %}
                         </select>
                     </div>
                     <div>
                         <label for="destination">Destino</label>
                         <select id="destination">
-                            <option value="opcion1">Opción 1</option>
-                            <option value="opcion2">Opción 2</option>
-                            <option value="opcion3">Opción 3</option>
+                            <option value="">Seleccione Destino</option>
+                            <!-- Llenar las opciones con los datos de los aeropuertos de destino -->
+                            {% for airport in airports['destino'] %}
+                                <option value="{{ airport }}">{{ airport }}</option>
+                            {% endfor %}
                         </select>
                     </div>
                 </div>
@@ -97,10 +97,6 @@
                     </div>
                     <div>
                         <button class="botton_AceptarBu" onclick="accept()">
-                            <span></span>
-                            <span></span>
-                            <span></span>
-                            <span></span>
                             Aceptar
                         </button>
                     </div>
@@ -122,7 +118,7 @@
                     <input type="checkbox" id="export-file">
                     <div class="export__file-options">
                         <label>Export As &nbsp; &#10140;</label>
-                        <label for="export-file" id="toPDF">PDF <img src="/static/images/json.png" alt=""></label>
+                        <label for="export-file" id="toPDF">PDF <img src="/static/images/pdf.png" alt=""></label>
                         <label for="export-file" id="toJSON">JSON <img src="/static/images/json.png" alt=""></label>
                         <label for="export-file" id="toCSV">CSV <img src="/static/images/csv.png" alt=""></label>
                         <label for="export-file" id="toEXCEL">EXCEL <img src="/static/images/excel.png" alt=""></label>
@@ -142,16 +138,16 @@
                         </tr>
                     </thead>
                     <tbody>
+                        {% for vuelo in vuelos %}
                         <tr>
-                            <td> 1 </td>
-                            <td> <img src="/static/images/Zinzu Chan Lee.jpg" alt="">Zinzu Chan Lee</td>
-                            <td> Seoul </td>
-                            <td> 17 Dec, 2022 </td>
-                            <td>
-                                <p class="status delivered">Delivered</p>
-                            </td>
-                            <td> <strong> $128.90 </strong></td>
+                            <td>{{ vuelo.idVuelo }}</td>
+                            <td>{{ vuelo.nombreVuelo }}</td>
+                            <td>{{ vuelo.fechaSalida }}</td>
+                            <td>{{ vuelo.horaSalida }}</td>
+                            <td><p class="status">{{ vuelo.estado }}</p></td>
+                            <td><strong>{{ vuelo.precio }}</strong></td>
                         </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </section>
@@ -170,6 +166,7 @@
                 // Mostrar el mensaje en el modal
                 document.getElementById("modal-message").innerText = data.message;
                 showModal(); // Muestra el modal
+
             })
             .catch(error => {
                 console.error("Error:", error);
@@ -184,7 +181,45 @@
             document.getElementById("modal").style.display = "none"; // Cierra el modal
         }
 
+        function accept() {
+            let origin = document.getElementById("origin").value;
+            let destination = document.getElementById("destination").value;
+            let date = document.getElementById("date").value;
+
+            // Imprimir los valores a la consola para verificar que se están obteniendo correctamente
+            console.log("Origen:", origin);
+            console.log("Destino:", destination);
+            console.log("Fecha:", date);
+
+            fetch('/buscar_vuelos', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ origin: origin, destination: destination, date: date })
+            })
+            .then(response => response.json())
+            .then(data => {
+                let tableBody = document.querySelector(".table__body tbody");
+                tableBody.innerHTML = "";  // Limpiar tabla
+
+                console.log(data);  // Esto te mostrará todos los datos que recibes en la consola
+                data.forEach(flight => {
+                    let row = `<tr>
+                        <td>${flight.idVuelo}</td>
+                        <td>${flight.origen} - ${flight.destino}</td>  
+                        <td>${flight.fechaSalida}</td>
+                        <td>${flight.horaSalida}</td>
+                        <td><p class="status">${flight.estado}</p></td>
+                    </tr>`;
+                    tableBody.innerHTML += row;
+                });
+            })
+            .catch(error => console.error("Error:", error));
+        }
+
+
+
     </script>
-    <script src="script.js"></script>
+    
+    <script src="/static/js/script.js"></script>
 </body>
 </html>

@@ -1,64 +1,33 @@
 from flask import Flask, request, jsonify, render_template
 import mysql.connector
-import firebase_admin
-from firebase_admin import credentials, firestore
-import time
-import threading
+from mysql.connector import Error
 
-app = Flask(__name__, template_folder="templates")  # 🟢 Define la carpeta de templates
+app = Flask(__name__)
 
-# 🔹 Inicializar Firebase.
-try:
-    cred = credentials.Certificate("key.json")  # Asegúrate de tener el archivo key.json
-    firebase_admin.initialize_app(cred)
-    db_firestore = firestore.client()
-    print("✅ Conectado a Firebase correctamente.")
-except Exception as e:
-    print(f"❌ Error al conectar con Firebase: {e}")
+# Conexión global a la base de datos
+db_connection = None
+query_executed = False
 
-# 🔹 Conectar a ambas bases de datos MySQL
-def connect_to_mysql(database_name):
+def connect_to_dbA():
+    global db_connection
     try:
-        conn = mysql.connector.connect(
-            host="localhost",   # Dirección del servidor MySQL
-            user="root",        # Usuario de MySQL
-            password="admin",   # Contraseña de MySQL
-            database=database_name  # Nombre de la base de datos (dbaeropuerto_a o dbaeropuerto_c)
-        )
-        return conn
-    except mysql.connector.Error as err:
-        print(f"❌ Error al conectar con MySQL ({database_name}): {err}")
+        # Solo conectar si no hay una conexión activa
+        if db_connection is None or not db_connection.is_connected():
+            db_connection = mysql.connector.connect(
+                host="localhost",
+                user="root",
+                password="admin",
+                database="db_aeropuerto_a"
+            )
+            if db_connection.is_connected():
+                print("🔌 Conectado a db_aeropuerto_a en MySQL")
+        return db_connection
+    except Error as err:
+        print(f"❌ Error al conectar con db_aeropuerto_a: {err}")
         return None
 
-# Crear conexiones simultáneas
-conn_mysql_a = connect_to_mysql("dbaeropuerto_a")  # Base de datos en Norteamérica (asumido)
-conn_mysql_c = connect_to_mysql("dbaeropuerto_c")  # Base de datos en Sudamérica
-# Firebase debe estar en Europa
-firebase_db = None  # Firebase no necesita conexión en este caso.
 
-# 🔹 Implementación de Relojes Vectoriales para sincronización
-vector_clock = {"dbaeropuerto_a": 0, "dbaeropuerto_b": 0, "dbaeropuerto_c": 0}
-
-# 🔹 Función para sincronizar datos entre servidores
-def sync_data():
-    while True:
-        # Simulación de sincronización cada 5 segundos
-        time.sleep(5)
-        print("🔄 Sincronizando datos entre servidores...")
-
-        # Incrementar el reloj vectorial
-        vector_clock["dbaeropuerto_a"] += 1
-        vector_clock["dbaeropuerto_b"] += 1
-        vector_clock["dbaeropuerto_c"] += 1
-
-        print(f"🕒 Estado del Reloj Vectorial: {vector_clock}")
-
-# Ejecutar sincronización en un hilo aparte
-sync_thread = threading.Thread(target=sync_data)
-sync_thread.daemon = True
-sync_thread.start()
-
-# 🔹 Diccionario actualizado de países por continente
+# Diccionario actualizado de países por continente
 countries = {
     "África": [
         "Argelia", "Angola", "Benín", "Botsuana", "Burkina Faso", "Burundi", "Cabo Verde", 
@@ -86,11 +55,11 @@ countries = {
         "Países Bajos", "Polonia", "Portugal", "Reino Unido", "República Checa", "Rumanía", "San Marino", "Serbia", 
         "Suecia", "Suiza", "Ucrania"
     ],
-    "América del Sur": [
+    "Sudamérica": [
         "Argentina", "Bolivia", "Brasil", "Chile", "Colombia", "Ecuador", "Guyana", "Paraguay", "Perú", "Surinam", 
         "Uruguay", "Venezuela"
     ],
-    "América del Norte": [
+    "Norteamérica": [
         "Canadá", "Estados Unidos", "México"
     ],
     "Oceanía": [
@@ -102,33 +71,24 @@ countries = {
     ]
 }
 
-# Función que determina el servidor más cercano según el país
-def get_server_for_country(country):
-    # Recorremos el diccionario de países por continente
-    for continent, countries_list in countries.items():
-        if country in countries_list:
-            # Si el país está en América del Norte, usa dbaeropuerto_a
-            if continent == "América del Norte":
-                return "Conectando a dbaeropuerto_a (MySQL) en América del Norte"
-            # Si el país está en América del Sur, usa dbaeropuerto_c
-            elif continent == "América del Sur":
-                return "Conectando a dbaeropuerto_c (MySQL) en América del Sur"
-            # Si el país está en Europa, usa dbaeropuerto_b
-            elif continent == "Europa":
-                return "Conectando a dbaeropuerto_b (Firebase) en Europa"
-            # Si el país no está en los continentes definidos
-            else:
-                return "No hay servidor disponible para este continente"
+
+# Ruta principal para mostrar la página
+@app.route('/')
+def home():
+    results = execute_query_and_print()  # Ejecuta la consulta para obtener los resultados
+    airports = {  # Crear un diccionario de aeropuertos de origen y destino
+        "origen": [],
+        "destino": []
+    }
     
-    # Si el país no se encuentra en ninguna lista de continentes
-    return "País no reconocido"
+    # Llenar los aeropuertos de origen y destino
+    for result in results:
+        airports["origen"].append(result['Descripcion_Aeropuerto_Origen'])
+        airports["destino"].append(result['Descripcion_Aeropuerto_Destino'])
 
-# Ejemplo de uso
-country_input = "España"  # Ejemplo de país
-server_connection = get_server_for_country(country_input)
-print(server_connection)
+    return render_template('index.html', airports=airports)  # Pasar los datos a index.html
 
-# 🔹 Ruta para determinar la base de datos a utilizar
+
 @app.route('/connect', methods=['POST'])
 def connect():
     country = request.json.get('country')
@@ -143,30 +103,135 @@ def connect():
     response = {"message": ""}
 
     # Determinar a qué servidor conectar
-    if continent == "Europa":
-        response["message"] = f"Conectado a Firebase dbaeropuerto_b (Europa)."
-    elif continent == "Asia":
-        response["message"] = f"Conectado a Firebase dbaeropuerto_b (Asia)."
-    elif continent == "América del Sur":
-        if conn_mysql_c:
-            response["message"] = f"Conectado a la base de datos dbaeropuerto_c (Sudamérica) (MySQL)."
-    elif continent == "América del Norte":
-        if conn_mysql_a:
-            response["message"] = f"Conectado a la base de datos dbaeropuerto_a (Norteamérica) (MySQL)."
-    elif continent == "África":
-        response["message"] = f"Conectado a la base de datos dbaeropuerto_a (África)Norteamérica(MySQL)."
-    elif continent == "Antártida":
-        response["message"] = f"No hay servidores disponibles para la Antártida."
-    else:
-        return jsonify({"message": "País no encontrado. Verifica el nombre."}), 400
+    if continent in ["Europa", "Asia", "África"]:
+        # Conectar a MySQL (dbaeropuerto_a)
+        response["message"] = f"Conectado a dbaeropuerto_a en (MYSQL-Europa) ({continent})."
+        connect_to_dbA()  # Conectar a dbaeropuerto_a
 
+    elif continent == "Norteamérica":
+        # Conectar a Firebase (dbaeropuerto_b)
+        response["message"] = "Conectado a dbaeropuerto_b en Firebase (Norteamérica)."
+        connect_to_dbA()  # Conectar a dbaeropuerto_b
+
+    elif continent == "Sudamérica":
+        # Conectar a MySQL (dbaeropuerto_c)
+        response["message"] = "Conectado a dbaeropuerto_c en MySQL (Sudamérica)."
+        connect_to_dbA()  # Conectar a dbaeropuerto_c
+
+    else:
+        response["message"] = "No hay servidores disponibles para este continente."
 
     return jsonify(response)
 
-# Ruta principal para mostrar la página
-@app.route('/')
-def home():
-    return render_template('index.html')  # 🟢 Retorna el archivo index.html
+
+# Ejecutar la consulta
+def execute_query_and_print():
+    try:
+        if db_connection is None or not db_connection.is_connected():
+            print("🔌 Intentando conectar a la base de datos...")
+            connect_to_dbA()  # Conectar a la base de datos si no está conectado
+
+        cursor = db_connection.cursor(dictionary=True)
+        # Nueva consulta con JOINs
+        query = """
+        SELECT 
+            rc.idRutaComercial, 
+            aeo.descripcion AS Descripcion_Aeropuerto_Origen, 
+            aed.descripcion AS Descripcion_Aeropuerto_Destino 
+        FROM 
+            RutaComercial rc 
+        JOIN 
+            Aeropuerto aeo ON rc.fk_idAeropuertoOrigen = aeo.idAeropuerto 
+        JOIN 
+            Aeropuerto aed ON rc.fk_idAeropuertoDestino = aed.idAeropuerto;
+        """
+        print(f"Ejecutando consulta: {query}")
+        cursor.execute(query)
+        results = cursor.fetchall()  # Obtener todos los resultados de la consulta
+        print(f"Resultados obtenidos: {results}")  # Imprimir los resultados
+
+        cursor.close()  # Cerrar el cursor después de la consulta
+        return results  # Devolver los resultados para la respuesta
+    except Error as err:
+        print(f"❌ Error al ejecutar la consulta: {err}")
+        return []
+
+
+#----------------------------------------------------------------------------------------------------------------------------------------------
+@app.route('/buscar_vuelos', methods=['POST'])
+def buscar_vuelos():
+    data = request.get_json()
+    origen = data['origin']
+    destino = data['destination']
+    fecha = data['date']
+
+    conn = connect_to_dbA()
+    cursor = conn.cursor(dictionary=True)
+
+    query = """
+        SELECT 
+            v.idVuelo, 
+            v.fechaSalida, 
+            v.horaSalida, 
+            v.estado, 
+            a1.descripcion AS Origen, 
+            a2.descripcion AS Destino,
+            al.nombreAerolinea,
+            av.nombreAvion,
+            av.tipoAvion
+        FROM Vuelo v
+        JOIN RutaComercial r ON v.RutaComercial_idRutaComercial = r.idRutaComercial
+        JOIN Aeropuerto a1 ON r.fk_idAeropuertoOrigen = a1.idAeropuerto
+        JOIN Aeropuerto a2 ON r.fk_idAeropuertoDestino = a2.idAeropuerto
+        JOIN Aerolinea al ON v.Aerolinea_idAerolinea = al.idAerolinea
+        JOIN Avion av ON v.Avion_idAvion = av.idAvion
+        WHERE 
+            a1.descripcion = %s
+            AND a2.descripcion = %s
+            AND v.fechaSalida = %s;
+    """
+
+    cursor.execute(query, (origen, destino, fecha))
+    vuelos = cursor.fetchall()
+
+    conn.close()
+
+    # Convertir los datos a texto o formato adecuado para pasar al frontend
+    vuelos_texto = []
+    for vuelo in vuelos:
+        vuelo_data = {
+            'idVuelo': vuelo['idVuelo'],
+            'fechaSalida': str(vuelo['fechaSalida']),
+            'horaSalida': str(vuelo['horaSalida']),
+            'estado': vuelo['estado'],
+            'origen': vuelo['Origen'],
+            'destino': vuelo['Destino'],
+            'nombreAerolinea': vuelo['nombreAerolinea'],
+            'nombreAvion': vuelo['nombreAvion'],
+            'tipoAvion': vuelo['tipoAvion']
+        }
+        vuelos_texto.append(vuelo_data)
+
+    # Enviar los datos como texto (JSON) o en formato plano si prefieres
+    return jsonify(vuelos_texto)
+
+
+#----------------------------------------------------------------------------------------------------------------------------------------------
+
+# Ejecutar la consulta al iniciar la aplicación y antes de cada solicitud
+@app.before_request
+def before_request():
+    global db_connection, query_executed  # Declarar las variables globales dentro de la función
+    # Asegurarse de que la base de datos esté conectada antes de cada solicitud
+    if db_connection is None or not db_connection.is_connected():
+        connect_to_dbA()
+
+    # Ejecutar la consulta solo la primera vez
+    if not query_executed:
+        print("🚀 Ejecutando consulta al iniciar la aplicación...")
+        execute_query_and_print()  # Llamar la función para ejecutar la consulta inmediatamente al inicio
+        query_executed = True  # Marcar la bandera como True para evitar ejecutar la consulta nuevamente
+
 
 if __name__ == '__main__':
     app.run(debug=True)
