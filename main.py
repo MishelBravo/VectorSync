@@ -220,10 +220,69 @@ def buscar_vuelos():
 
 @app.route('/info')
 def info_vuelo():
-    id_vuelo = request.args.get('id')
-    # Aquí puedes hacer algo con el id_vuelo, como consultar la base de datos
-    return render_template('info.html', id_vuelo=id_vuelo)
+    id_vuelo = request.args.get('id')  # Obtén el id del vuelo desde la URL
 
+    # Conexión a la base de datos
+    connection = connect_to_dbA()
+    cursor = connection.cursor()
+
+    # Consulta SQL
+    query = """
+    SELECT 
+        v.idVuelo, 
+        v.fechaSalida, 
+        v.horaSalida, 
+        v.fechaActulizacion, 
+        v.estado AS estadoVuelo,
+        
+        -- Información de la ruta comercial (Aeropuerto Origen y Destino)
+        ao.descripcion AS aeropuertoOrigen,
+        ad.descripcion AS aeropuertoDestino,
+        
+        -- Nombre de la aerolínea
+        a.nombreAerolinea,
+        
+        -- Información del avión
+        av.nombreAvion,
+
+        -- Información de los asientos
+        asi.idAsiento,
+        asi.numeroAsiento,
+        asi.estado AS estadoAsiento,
+        asi.fechaActulizacion AS fechaActualizacionAsiento,
+
+        -- Información de la categoría del asiento
+        cat.nombreCategoria,           -- Nombre de la categoría
+        cat.precioAsiento,             -- Precio del asiento
+
+        -- Agregar el id del asiento junto con la categoría y el estado
+        asi.fk_idCategoria AS idCategoriaAsiento,
+        asi.fk_idAvion AS idAvionAsiento
+
+    FROM Vuelo v
+    -- Relación con RutaComercial
+    JOIN RutaComercial rc ON v.RutaComercial_idRutaComercial = rc.idRutaComercial
+    JOIN Aeropuerto ao ON rc.fk_idAeropuertoOrigen = ao.idAeropuerto
+    JOIN Aeropuerto ad ON rc.fk_idAeropuertoDestino = ad.idAeropuerto
+
+    -- Relación con Aerolínea y Avión
+    JOIN Aerolinea a ON v.Aerolinea_idAerolinea = a.idAerolinea
+    JOIN Avion av ON v.Avion_idAvion = av.idAvion
+
+    -- Relación con los asientos y su categoría
+    JOIN Asiento asi ON av.idAvion = asi.fk_idAvion
+    JOIN Categoria cat ON asi.fk_idCategoria = cat.idCategoria
+
+    WHERE v.idVuelo = %s;
+    """
+    cursor.execute(query, (id_vuelo,))
+
+    vuelo_info = cursor.fetchall()
+
+    connection.close()
+
+    # Pasar los resultados a la plantilla HTML
+    return render_template('info.html', vuelo_info=vuelo_info)
 
 #----------------------------------------------------------------------------------------------------------------------------------------------
 

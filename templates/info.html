@@ -47,18 +47,31 @@
             <span style="--i:18;"></span>
             <span style="--i:21;"></span>
         </div>
-        
+
         <!-- Card de Asientos -->
         <div class="card seats-card">
             <div class="seats">
-                <!-- Aquí irían los asientos del avión, generados dinámicamente -->
-                <button class="seat">A1</button>
-                <button class="seat">A2</button>
-                <button class="seat">B1</button>
-                <button class="seat">A1</button>
-                <button class="seat">A2</button>
+                {% for asiento in vuelo_info %}
+                    <button class="seat 
+                        {% if asiento[11] == 'Libre' %} seat-libre 
+                        {% elif asiento[11] == 'Reserva' %} seat-reserva 
+                        {% elif asiento[11] == 'Venta' %} seat-venta 
+                        {% else %} seat-ocupado 
+                        {% endif %}"
+                            id="asiento-{{ asiento[0] }}"  
+                            data-id="{{ asiento[0] }}"            
+                            data-numero="{{ asiento[10] }}"        
+                            data-precio="{{ asiento[14] }}"       
+                            data-categoria="{{ asiento[13] }}"    
+                            data-estado="{{ asiento[11] }}"       
+                            onclick="seleccionarAsiento(this)">
+                        {{ asiento[10] }}
+                    </button>
+                {% endfor %}
             </div>
         </div>
+
+        
         <img src="/static/images/avion.png" alt="Avión" class="seats-image">
 
         <!-- Card de Información de Vuelo -->
@@ -67,32 +80,39 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label for="nombre-vuelo">Nombre del Vuelo:</label>
-                        <input type="text" id="nombre-vuelo" name="nombre-vuelo" required>
+                        <!-- Asignamos correctamente el nombre del vuelo -->
+                        <input type="text" id="nombre-vuelo" name="nombre-vuelo" value="{{ vuelo_info[0][6] }}" required>
                     </div>
                     <div class="form-group">
                         <label for="nombre-avion">Nombre del Avión:</label>
-                        <input type="text" id="nombre-avion" name="nombre-avion" required>
+                        <!-- Asignamos correctamente el nombre del avión -->
+                        <input type="text" id="nombre-avion" name="nombre-avion" value="{{ vuelo_info[0][8] }}" required>
                     </div>
                     <div class="form-group">
                         <label for="aerolinea">Nombre de Aerolínea:</label>
-                        <input type="text" id="aerolinea" name="aerolinea" required>
+                        <!-- Asignamos correctamente el nombre de la aerolínea -->
+                        <input type="text" id="aerolinea" name="aerolinea" value="{{ vuelo_info[0][7] }}" required>
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
                         <label for="numero-asiento">Número de Asiento:</label>
+                        <!-- Eliminamos el valor de este campo para que se quede vacío -->
                         <input type="text" id="numero-asiento" name="numero-asiento" required>
                     </div>
                     <div class="form-group">
                         <label for="precio">Precio:</label>
+                        <!-- Eliminamos el valor de este campo para que se quede vacío -->
                         <input type="text" id="precio" name="precio" required>
                     </div>
                     <div class="form-group">
                         <label for="categoria-asiento">Categoría del Asiento:</label>
+                        <!-- Eliminamos el valor de este campo para que se quede vacío -->
                         <input type="text" id="categoria-asiento" name="categoria-asiento" required>
                     </div>
                     <div class="form-group">
                         <label for="estado">Estado del Asiento:</label>
+                        <!-- Eliminamos los valores predefinidos para que el selector esté vacío -->
                         <select id="estado" name="estado" required>
                             <option value="Libre">Libre</option>
                             <option value="Reserva">Reserva</option>
@@ -100,7 +120,7 @@
                             <option value="Devolucion">Devolución</option>
                         </select>
                     </div>
-                </div>
+                </div>                
                 
                 <div class="form-row">
                     <div class="form-group">
@@ -120,12 +140,42 @@
                         <input type="text" id="pasaporte" name="pasaporte" required>
                     </div>
                 </div>
-               
+            
                 <button type="submit" class="btn btn-primary">Aceptar</button>
             </form>
         </div>
 
 
     </div>
+    <script>
+        // Función para manejar el clic en un asiento
+        function seleccionarAsiento(asientoElemento) {
+            // Obtener los datos del asiento desde los atributos data-*
+            const idAsiento = asientoElemento.getAttribute('data-id');
+            const numeroAsiento = asientoElemento.getAttribute('data-numero');  // Este debe ser "A1"
+            const precioAsiento = asientoElemento.getAttribute('data-precio');
+            const categoriaAsiento = asientoElemento.getAttribute('data-categoria');
+            const estadoAsiento = asientoElemento.getAttribute('data-estado');
+        
+            // Mostrar los datos en la consola (opcional)
+            console.log("ID de Asiento seleccionado: " + idAsiento);
+            console.log("Número de Asiento: " + numeroAsiento);  // Debería mostrar "A1"
+            console.log("Precio del Asiento: " + precioAsiento);
+            console.log("Categoría del Asiento: " + categoriaAsiento);
+            console.log("Estado del Asiento: " + estadoAsiento);
+        
+            // Llenar los campos del formulario con la información obtenida
+            document.getElementById("numero-asiento").value = numeroAsiento;
+            document.getElementById("precio").value = precioAsiento;
+            document.getElementById("categoria-asiento").value = categoriaAsiento;
+            
+            // Llenar el campo de estado con el valor correspondiente
+            const estadoSelect = document.getElementById("estado");
+            estadoSelect.value = estadoAsiento;
+        }
+    </script>
+    
+    
+
 </body>
 </html>

@@ -139,3 +139,20 @@ button[type="submit"] {
 button[type="submit"]:hover {
     background-color: #023e8a;
 }
+
+
+.seat-libre {
+    background-color: #1c64ff;
+}
+
+.seat-reserva {
+    background-color: yellow;
+}
+
+.seat-venta {
+    background-color: #3ff339;
+}
+
+.seat-ocupado {
+    background-color: grey;
+}
