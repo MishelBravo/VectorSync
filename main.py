@@ -333,6 +333,15 @@ def reservar_asiento():
         """
         cursor.execute(query_actualizar_asiento, (estado, id_asiento))
 
+
+        # Actualizar la fechaActualizacion en la tabla Vuelo
+        query_actualizar_fecha = """
+        UPDATE Vuelo
+        SET fechaActulizacion = UNIX_TIMESTAMP()
+        WHERE idVuelo = %s
+        """
+        cursor.execute(query_actualizar_fecha, (id_vuelo,))
+
         # Confirmar los cambios
         connection.commit()
         connection.close()
