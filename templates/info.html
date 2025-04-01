@@ -58,8 +58,8 @@
                         {% elif asiento[11] == 'Venta' %} seat-venta 
                         {% else %} seat-ocupado 
                         {% endif %}"
-                            id="asiento-{{ asiento[0] }}"  
-                            data-id="{{ asiento[0] }}"            
+                            id="asiento-{{ asiento[9] }}"  
+                            data-id="{{ asiento[9] }}"            
                             data-numero="{{ asiento[10] }}"        
                             data-precio="{{ asiento[14] }}"       
                             data-categoria="{{ asiento[13] }}"    
@@ -138,10 +138,12 @@
                     <div class="form-group">
                         <label for="pasaporte">Pasaporte:</label>
                         <input type="text" id="pasaporte" name="pasaporte" required>
+                        <input type="hidden" id="id-asiento" name="id-asiento">
+
                     </div>
                 </div>
-            
-                <button type="submit" class="btn btn-primary">Aceptar</button>
+                
+                <button type="button" class="btn btn-primary" onclick="aceptar()">Aceptar</button>
             </form>
         </div>
 
@@ -168,14 +170,62 @@
             document.getElementById("numero-asiento").value = numeroAsiento;
             document.getElementById("precio").value = precioAsiento;
             document.getElementById("categoria-asiento").value = categoriaAsiento;
+            document.getElementById("id-asiento").value = idAsiento; // Guardar ID de Asiento
             
             // Llenar el campo de estado con el valor correspondiente
             const estadoSelect = document.getElementById("estado");
             estadoSelect.value = estadoAsiento;
-        }
-    </script>
-    
-    
 
+            // Llenar el campo de estado con el valor correspondiente
+            document.getElementById("estado").value = estadoAsiento;
+
+        }
+
+        function aceptar() {
+            const nombrePasajero = document.getElementById("nombre-pasajero").value;
+            const primerApellido = document.getElementById("primer-apellido").value;
+            const segundoApellido = document.getElementById("segundo-apellido").value;
+            const pasaporte = document.getElementById("pasaporte").value;
+            const estadoAsiento = document.getElementById("estado").value;
+            const numeroAsiento = document.getElementById("numero-asiento").value;
+            const precio = document.getElementById("precio").value;
+            const categoriaAsiento = document.getElementById("categoria-asiento").value;
+            const idAsiento = document.getElementById("id-asiento").value;
+
+            // Obtener ID de Vuelo desde la URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const idVuelo = urlParams.get("id");
+
+            // Crear el objeto JSON con los datos a enviar
+            const datosReserva = {
+                idVuelo: idVuelo,
+                idAsiento: idAsiento,
+                nombrePasajero: nombrePasajero,
+                primerApellido: primerApellido,
+                segundoApellido: segundoApellido,
+                pasaporte: pasaporte,
+                estadoAsiento: estadoAsiento
+            };
+
+            // Enviar la solicitud POST al backend con los datos en formato JSON
+            fetch("/reservar_asiento", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'  // Asegúrate de que el tipo de contenido sea JSON
+                },
+                body: JSON.stringify(datosReserva)
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Mostrar el mensaje en una ventana emergente
+                alert(data.mensaje);
+            })
+            .catch(error => {
+                alert("❌ Error en la solicitud: " + error);
+            });
+        }
+
+
+    </script>
 </body>
 </html>

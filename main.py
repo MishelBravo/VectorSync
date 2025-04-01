@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify, render_template
 import mysql.connector
 from mysql.connector import Error
+from flask import Flask, render_template, request, redirect
 
 app = Flask(__name__)
 
@@ -283,6 +284,65 @@ def info_vuelo():
 
     # Pasar los resultados a la plantilla HTML
     return render_template('info.html', vuelo_info=vuelo_info)
+
+#----------------------------------------------------------------------------------------------------------------------------------------------
+
+@app.route('/reservar_asiento', methods=['POST'])
+def reservar_asiento():
+    try:
+        # Obtener los datos del JSON enviado desde el frontend
+        data = request.get_json()
+
+        # Extraer los datos del JSON
+        id_vuelo = data.get('idVuelo')
+        id_asiento = data.get('idAsiento')
+        nombre = data.get('nombrePasajero')
+        primer_apellido = data.get('primerApellido')
+        segundo_apellido = data.get('segundoApellido')
+        pasaporte = data.get('pasaporte')
+        estado = data.get('estadoAsiento')
+
+        # Conectar a la base de datos
+        connection = connect_to_dbA()
+        if connection is None:
+            return jsonify({"mensaje": "❌ Error al conectar con la base de datos"}), 500
+
+        cursor = connection.cursor()
+
+        # Verificar si el pasajero ya existe en la base de datos
+        query_verificar_pasajero = "SELECT idPasajero FROM Pasajero WHERE pasaporte = %s"
+        cursor.execute(query_verificar_pasajero, (pasaporte,))
+        pasajero_existente = cursor.fetchone()  # Obtiene el primer resultado si existe
+
+        if pasajero_existente:
+            mensaje = "✅ El pasajero ya existe. Se actualizó su asiento."
+        else:
+            # Insertar el pasajero en la tabla Pasajero si no existe
+            query_insert_pasajero = """
+            INSERT INTO Pasajero (pasaporte, nombre, primerApellido, segundoApellido, fk_idVuelo)
+            VALUES (%s, %s, %s, %s, %s)
+            """
+            cursor.execute(query_insert_pasajero, (pasaporte, nombre, primer_apellido, segundo_apellido, id_vuelo))
+            mensaje = "✅ Nuevo pasajero registrado y asiento actualizado."
+
+        # Actualizar el estado del asiento en la tabla Asiento
+        query_actualizar_asiento = """
+        UPDATE Asiento
+        SET estado = %s
+        WHERE idAsiento = %s
+        """
+        cursor.execute(query_actualizar_asiento, (estado, id_asiento))
+
+        # Confirmar los cambios
+        connection.commit()
+        connection.close()
+
+        # Retornar la respuesta JSON al frontend
+        return jsonify({"mensaje": mensaje})
+
+    except Exception as e:
+        return jsonify({"mensaje": f"❌ Error en el servidor: {e}"}), 500
+
 
 #----------------------------------------------------------------------------------------------------------------------------------------------
 
