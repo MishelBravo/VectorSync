@@ -182,32 +182,46 @@
             // Llamar al servidor para obtener los datos del pasajero con el idAsiento
             obtenerDatosPasajero(idAsiento);
 
+
+            // Llenar el campo de estado con el valor correspondiente
+            document.getElementById("estado").value = estadoAsiento;
+
+            // Guardar el estado original del asiento en el atributo data-estado
+            document.getElementById("estado").setAttribute("data-estado", estadoAsiento); // Guardar el estado original
+            
+
         }
-        
+
         async function obtenerDatosPasajero(idAsiento) {
-        const response = await fetch('/obtener_pasajero', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ idAsiento: idAsiento }),
-        });
+            const response = await fetch('/obtener_pasajero', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ idAsiento: idAsiento }),
+            });
 
-        const data = await response.json();
+            const data = await response.json();
 
-        if (data.nombre) {
-            // Llenar los campos con la información del pasajero
-            document.getElementById("nombre-pasajero").value = data.nombre;
-            document.getElementById("primer-apellido").value = data.primerApellido;
-            document.getElementById("segundo-apellido").value = data.segundoApellido;
-            document.getElementById("pasaporte").value = data.pasaporte;
-        } else {
-            // Si no se encuentra ningún pasajero, puedes manejarlo como desees
-            alert("No se encontró ningún pasajero con ese asiento.");
+            if (data.nombre) {
+                // Llenar los campos con la información del pasajero
+                document.getElementById("nombre-pasajero").value = data.nombre;
+                document.getElementById("primer-apellido").value = data.primerApellido;
+                document.getElementById("segundo-apellido").value = data.segundoApellido;
+                document.getElementById("pasaporte").value = data.pasaporte;
+            } else {
+                // Si no se encuentra ningún pasajero, puedes manejarlo como desees
+                alert("No se encontró ningún pasajero con ese asiento.");
+            }
         }
-    }
 
         function aceptar() {
+            
+            // Validar antes de continuar con la lógica
+            if (!validarCambioEstado()) {
+                return; // Si la validación falla, no continuar
+            }
+
             const nombrePasajero = document.getElementById("nombre-pasajero").value;
             const primerApellido = document.getElementById("primer-apellido").value;
             const segundoApellido = document.getElementById("segundo-apellido").value;
@@ -249,6 +263,37 @@
             .catch(error => {
                 alert("❌ Error en la solicitud: " + error);
             });
+        }
+        // Función que valida los cambios de estado
+        function validarCambioEstado() {
+            // Obtener el valor actual del estado y el estado original del asiento
+            const estadoSeleccionado = document.getElementById("estado").value;
+            const estadoOriginal = document.getElementById("estado").getAttribute("data-estado");
+
+            // Validaciones para permitir solo las transiciones específicas
+            if (estadoOriginal === "Libre") {
+                if (estadoSeleccionado !== "Libre" && estadoSeleccionado !== "Reserva" && estadoSeleccionado !== "Venta") {
+                    alert("¡Error! De 'Libre' solo puedes cambiar a 'Reserva' o 'Venta'.");
+                    return false;
+                }
+            } else if (estadoOriginal === "Reserva") {
+                if (estadoSeleccionado !== "Reserva" && estadoSeleccionado !== "Venta" && estadoSeleccionado !== "Devolucion") {
+                    alert("¡Error! De 'Reserva' solo puedes cambiar a 'Venta' o 'Devolución'.");
+                    return false;
+                }
+            } else if (estadoOriginal === "Venta") {
+                if (estadoSeleccionado !== "Venta") {
+                    alert("¡Error! 'Venta' no puede cambiar a otro estado.");
+                    return false;
+                }
+            } else if (estadoOriginal === "Devolucion") {
+                if (estadoSeleccionado !== "Devolucion" && estadoSeleccionado !== "Libre") {
+                    alert("¡Error! De 'Devolución' solo puedes cambiar a 'Libre'.");
+                    return false;
+                }
+            }
+
+            return true; // Si no hay errores, se permite el cambio
         }
 
 
