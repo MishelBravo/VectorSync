@@ -179,7 +179,33 @@
             // Llenar el campo de estado con el valor correspondiente
             document.getElementById("estado").value = estadoAsiento;
 
+            // Llamar al servidor para obtener los datos del pasajero con el idAsiento
+            obtenerDatosPasajero(idAsiento);
+
         }
+        
+        async function obtenerDatosPasajero(idAsiento) {
+        const response = await fetch('/obtener_pasajero', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ idAsiento: idAsiento }),
+        });
+
+        const data = await response.json();
+
+        if (data.nombre) {
+            // Llenar los campos con la información del pasajero
+            document.getElementById("nombre-pasajero").value = data.nombre;
+            document.getElementById("primer-apellido").value = data.primerApellido;
+            document.getElementById("segundo-apellido").value = data.segundoApellido;
+            document.getElementById("pasaporte").value = data.pasaporte;
+        } else {
+            // Si no se encuentra ningún pasajero, puedes manejarlo como desees
+            alert("No se encontró ningún pasajero con ese asiento.");
+        }
+    }
 
         function aceptar() {
             const nombrePasajero = document.getElementById("nombre-pasajero").value;

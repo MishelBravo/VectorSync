@@ -346,6 +346,38 @@ def reservar_asiento():
 
 #----------------------------------------------------------------------------------------------------------------------------------------------
 
+@app.route('/obtener_pasajero', methods=['POST'])
+def obtener_pasajero():
+    data = request.get_json()
+    id_asiento = data.get('idAsiento')
+
+    conn = connect_to_dbA()
+    cursor = conn.cursor(dictionary=True)
+
+    query = """
+        SELECT p.nombre, p.primerApellido, p.segundoApellido, p.pasaporte
+        FROM Pasajero p
+        JOIN Vuelo v ON p.fk_idVuelo = v.idVuelo
+        JOIN Avion av ON v.Avion_idAvion = av.idAvion
+        JOIN Asiento a ON a.fk_idAvion = av.idAvion
+        WHERE a.idAsiento = %s
+        ORDER BY p.idPasajero DESC
+        LIMIT 1;
+    """
+
+    cursor.execute(query, (id_asiento,))
+    pasajero = cursor.fetchone()
+    conn.close()
+
+    return jsonify(pasajero if pasajero else {})
+
+@app.route('/info')
+def info():
+    return render_template('info.html')
+
+
+#----------------------------------------------------------------------------------------------------------------------------------------------
+
 # Ejecutar la consulta al iniciar la aplicación y antes de cada solicitud
 @app.before_request
 def before_request():
