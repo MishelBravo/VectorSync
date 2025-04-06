@@ -73,7 +73,6 @@
                         <label for="origin">Origen</label>
                         <select id="origin">
                             <option value="">Seleccione Origen</option>
-                            <!-- Llenar las opciones con los datos de los aeropuertos de origen -->
                             {% for airport in airports['origen'] %}
                                 <option value="{{ airport }}">{{ airport }}</option>
                             {% endfor %}
@@ -83,7 +82,6 @@
                         <label for="destination">Destino</label>
                         <select id="destination">
                             <option value="">Seleccione Destino</option>
-                            <!-- Llenar las opciones con los datos de los aeropuertos de destino -->
                             {% for airport in airports['destino'] %}
                                 <option value="{{ airport }}">{{ airport }}</option>
                             {% endfor %}
@@ -113,7 +111,7 @@
                     <input type="search" placeholder="Search Data...">
                     <img src="/static/images/search.png" alt="">
                 </div>
-                <!--<div class="export__file">
+                <div class="export__file">
                     <label for="export-file" class="export__file-btn" title="Export File"></label>
                     <input type="checkbox" id="export-file">
                     <div class="export__file-options">
@@ -123,7 +121,7 @@
                         <label for="export-file" id="toCSV">CSV <img src="/static/images/csv.png" alt=""></label>
                         <label for="export-file" id="toEXCEL">EXCEL <img src="/static/images/excel.png" alt=""></label>
                     </div>
-                </div>-->
+                </div>
             </section>
             <section class="table__body">
                 <table>

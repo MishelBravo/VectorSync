@@ -76,18 +76,16 @@ countries = {
 # Ruta principal para mostrar la página
 @app.route('/')
 def home():
-    results = execute_query_and_print()  # Ejecuta la consulta para obtener los resultados
-    airports = {  # Crear un diccionario de aeropuertos de origen y destino
-        "origen": [],
-        "destino": []
-    }
-    
-    # Llenar los aeropuertos de origen y destino
-    for result in results:
-        airports["origen"].append(result['Descripcion_Aeropuerto_Origen'])
-        airports["destino"].append(result['Descripcion_Aeropuerto_Destino'])
+    results = execute_query_and_print()  # Solo contiene aeropuertos
+    descriptions = [airport['descripcion'] for airport in results]
 
-    return render_template('index.html', airports=airports)  # Pasar los datos a index.html
+    airports = {
+        "origen": descriptions,
+        "destino": descriptions
+    }
+
+    return render_template('index.html', airports=airports)
+
 
 
 @app.route('/connect', methods=['POST'])
@@ -130,29 +128,22 @@ def execute_query_and_print():
     try:
         if db_connection is None or not db_connection.is_connected():
             print("🔌 Intentando conectar a la base de datos...")
-            connect_to_dbA()  # Conectar a la base de datos si no está conectado
+            connect_to_dbA()  # Conectar si no está ya conectado
 
         cursor = db_connection.cursor(dictionary=True)
-        # Nueva consulta con JOINs
+
+        # 🔄 Solo obtener las descripciones de los aeropuertos
         query = """
-        SELECT 
-            rc.idRutaComercial, 
-            aeo.descripcion AS Descripcion_Aeropuerto_Origen, 
-            aed.descripcion AS Descripcion_Aeropuerto_Destino 
-        FROM 
-            RutaComercial rc 
-        JOIN 
-            Aeropuerto aeo ON rc.fk_idAeropuertoOrigen = aeo.idAeropuerto 
-        JOIN 
-            Aeropuerto aed ON rc.fk_idAeropuertoDestino = aed.idAeropuerto;
+        SELECT idAeropuerto, descripcion 
+        FROM Aeropuerto;
         """
         print(f"Ejecutando consulta: {query}")
         cursor.execute(query)
-        results = cursor.fetchall()  # Obtener todos los resultados de la consulta
-        print(f"Resultados obtenidos: {results}")  # Imprimir los resultados
+        results = cursor.fetchall()
+        print(f"Resultados obtenidos: {results}")
 
-        cursor.close()  # Cerrar el cursor después de la consulta
-        return results  # Devolver los resultados para la respuesta
+        cursor.close()
+        return results
     except Error as err:
         print(f"❌ Error al ejecutar la consulta: {err}")
         return []
