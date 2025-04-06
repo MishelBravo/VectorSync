@@ -1,49 +1,57 @@
-*{
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
-body{
+
+body {
     min-height: 100vh;
-    background: #0c192c;
+    background: #0c192c; /* Fondo oscuro para hacer resaltar las burbujas */
 }
-.container{
+
+.container {
     position: relative;
     width: 100%;
     height: 100vh;
     overflow: hidden;
 }
 
-.bubbles{
+/* Estilo de las burbujas */
+.bubbles {
     position: relative;
     display: flex;
 }
 
-.bubbles span{
+.bubbles span {
     position: relative;
     width: 30px;
     height: 30px;
-    background: #4fc3dc;
+    background: linear-gradient(45deg, #ff9d00, #ff5c00, #ff2200); /* Fuego: tonos de naranja, rojo y amarillo */
     margin: 0 4px;
     border-radius: 50%;
-    box-shadow: 0 0 0 10px #4fc3dc44,
-    0 0 50px #4fc3dc,
-    0 0 100px #4fc3dc;
+    box-shadow: 
+        0 0 0 10px rgba(255, 140, 0, 0.3),  /* Humo amarillo */
+        0 0 50px rgba(255, 60, 0, 0.6),    /* Humo naranja */
+        0 0 100px rgba(255, 20, 0, 0.9);    /* Humo rojo */
     animation: animate 15s linear infinite;
-    animation-duration: calc(125s / var(--i));
-}
-.bubbles span:nth-child(even){
-    background: #ff2d75;
-    box-shadow: 0 0 0 10px #ff2d7544,
-    0 0 50px #ff2d75,
-    0 0 100px #ff2d75;
+    animation-duration: calc(125s / var(--i)); /* Controlar velocidad según el índice de cada burbuja */
 }
 
+/* Modificación para las burbujas impares (pueden tener un color más cálido o brillante) */
+.bubbles span:nth-child(even) {
+    background: linear-gradient(45deg, #ff2200, #ff6800, #ff9e00); /* Variación de los tonos de fuego */
+    box-shadow: 
+        0 0 0 10px rgba(255, 50, 0, 0.3), /* Humo más brillante */
+        0 0 50px rgba(255, 100, 0, 0.6), 
+        0 0 100px rgba(255, 150, 0, 0.9); 
+}
+
+/* Animación para el movimiento de las burbujas */
 @keyframes animate {
-    0%{
-        transform: translateY(100vh) scale(0);
+    0% {
+        transform: translateY(100vh) scale(0);  /* Las burbujas empiezan fuera de la vista */
     }
-    100%{
-        transform: translateY(-10vh) scale(1);
+    100% {
+        transform: translateY(-10vh) scale(1); /* Las burbujas ascienden hacia arriba */
     }
 }

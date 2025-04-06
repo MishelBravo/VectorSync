@@ -394,9 +394,39 @@ def obtener_pasajero():
 def info():
     return render_template('info.html')
 
+#--------------------------------------------------------------------------------------------------------------------------------
+@app.route('/aviones')
+def aviones():
+    try:
+        # Obtener los IDs de los aviones
+        ids_aviones = obtener_ids_aviones()
 
-#----------------------------------------------------------------------------------------------------------------------------------------------
+        # Pasar los IDs al template HTML
+        return render_template('Aviones.html', ids_aviones=ids_aviones)
+    except Exception as e:
+        print(f"Error al obtener los aviones: {e}")
+        return "Error al obtener los aviones.", 500
 
+def obtener_ids_aviones():
+    try:
+        if db_connection is None or not db_connection.is_connected():
+            connect_to_dbA()
+
+        cursor = db_connection.cursor(dictionary=True)
+        query = "SELECT idAvion FROM avion;"
+        cursor.execute(query)
+        resultados = cursor.fetchall()
+        cursor.close()
+
+        # Extraer solo los IDs
+        ids = [row['idAvion'] for row in resultados]
+        return ids
+    except Error as e:
+        print(f"❌ Error al obtener los aviones: {e}")
+        return []
+
+
+#--------------------------------------------------------------------------------------------------------------------------------
 # Ejecutar la consulta al iniciar la aplicación y antes de cada solicitud
 @app.before_request
 def before_request():

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aviones</title>
+    <link rel="stylesheet" type="text/css" href="/static/aviones.css">
+</head>
+<body class="body-imagen">
+
+    <!-- Contenido de la página -->
+    <div class="aviones-container">
+        <h1 class="aviones-title">Lista de Aviones</h1>
+        <ul class="aviones-list">
+            {% for id in ids_aviones %}
+                <li class="aviones-item">Avion ID: {{ id }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+</body>
+</html>
