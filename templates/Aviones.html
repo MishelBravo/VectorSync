@@ -11,12 +11,59 @@
     <!-- Contenido de la página -->
     <div class="aviones-container">
         <h1 class="aviones-title">Lista de Aviones</h1>
-        <ul class="aviones-list">
+        <div class="aviones-grid">
             {% for id in ids_aviones %}
-                <li class="aviones-item">Avion ID: {{ id }}</li>
+                <button class="aviones-btn" onclick="mostrarDetalle('{{ id }}')">
+                    <img src="/static/images/InfoAvion.png" alt="Avión" class="avion-icon">
+                </button>
             {% endfor %}
-        </ul>
+        </div>
     </div>
+
+    <!-- Modal para mostrar detalles del avión -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <h3>Detalles del Avión</h3>
+            <p>ID del avión: <span id="avion-id"></span></p>
+            <p>Nombre del avión: <span id="nombre-avion">N/A</span></p>
+            <p>Millas acumuladas: <span id="millas-avion">0 km</span></p>
+            <p>Estado: <span id="estado-avion">No disponible</span></p>
+            <p>Ruta: <span id="ruta-avion">No disponible</span></p>
+            <button onclick="cerrarModal()">Cerrar</button>
+        </div>
+    </div>
+
+
+    <!-- Script para abrir/cerrar modal -->
+    <script>
+        function mostrarDetalle(idAvion) {
+            // Mostrar el modal primero
+            document.getElementById("modal").style.display = "flex";
+            document.getElementById("avion-id").innerText = idAvion;
+
+            // Hacer una petición al backend
+            fetch(`/detalle_avion/${idAvion}`)
+                .then(response => response.json()) // Aquí esperamos la respuesta como JSON
+                .then(data => {
+                    console.log("DATA:", data); // Ver los datos en la consola (opcional)
+
+                    // Rellenar campos del modal con los datos del avión
+                    document.getElementById("nombre-avion").innerText = data.nombreAvion || "N/A";
+                    document.getElementById("millas-avion").innerText = data.millasTotales ? `${data.millasTotales} millas` : "0 millas";
+                    document.getElementById("estado-avion").innerText = data.estado || "No disponible";
+                    document.getElementById("ruta-avion").innerText = data.vuelo || "No disponible";
+                })
+                .catch(error => {
+                    console.error("Error al obtener datos del avión:", error);
+                });
+        }
+
+        function cerrarModal() {
+            // Ocultar el modal
+            document.getElementById("modal").style.display = "none";
+        }
+    </script>
+    
 
 </body>
 </html>

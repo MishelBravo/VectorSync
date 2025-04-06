@@ -427,6 +427,84 @@ def obtener_ids_aviones():
 
 
 #--------------------------------------------------------------------------------------------------------------------------------
+
+@app.route('/detalle_avion/<int:id_avion>')
+def detalle_avion(id_avion):
+    try:
+        # Verificar conexión a la base de datos
+        if db_connection is None or not db_connection.is_connected():
+            connect_to_dbA()
+
+        cursor = db_connection.cursor(dictionary=True)
+
+        # Consulta 1: Millas acumuladas
+        query_millas = """
+            SELECT 
+                v.Avion_idAvion AS idAvion,
+                SUM(rc.distancia_aproximada) AS total_distancia
+            FROM vuelo v
+            JOIN RutaComercial rc ON v.RutaComercial_idRutaComercial = rc.idRutaComercial
+            WHERE 
+                v.Avion_idAvion = %s
+                AND v.fechaSalida BETWEEN '2025-01-01' AND '2025-12-31'
+            GROUP BY v.Avion_idAvion;
+        """
+        cursor.execute(query_millas, (id_avion,))
+        millas_result = cursor.fetchone()
+
+        # Consulta 2: Estado actual
+        query_estado = """
+            SELECT 
+              v.idVuelo,
+              a.nombreAvion,
+              ac.nombreAerolinea,
+              rc.idRutaComercial,
+              ao.descripcion AS origen,
+              ad.descripcion AS destino,
+              v.fechaSalida,
+              v.horaSalida,
+              v.fechaLlegada,
+              v.horaLlegada,
+              CONCAT(v.fechaSalida, ' ', v.horaSalida) AS fechaHoraSalida,
+              CONCAT(v.fechaLlegada, ' ', v.horaLlegada) AS fechaHoraLlegada,
+              NOW() AS fechaHoraActual,
+              CASE 
+                WHEN NOW() < CONCAT(v.fechaSalida, ' ', v.horaSalida) THEN 'En tierra (esperando vuelo)'
+                WHEN NOW() BETWEEN CONCAT(v.fechaSalida, ' ', v.horaSalida) AND CONCAT(v.fechaLlegada, ' ', v.horaLlegada) THEN 'En vuelo'
+                ELSE CONCAT('En destino: ', ad.descripcion)
+              END AS estadoAvion
+            FROM Vuelo v
+            JOIN Avion a ON v.Avion_idAvion = a.idAvion
+            JOIN Aerolinea ac ON v.Aerolinea_idAerolinea = ac.idAerolinea
+            JOIN RutaComercial rc ON v.RutaComercial_idRutaComercial = rc.idRutaComercial
+            JOIN Aeropuerto ao ON rc.fk_idAeropuertoOrigen = ao.idAeropuerto
+            JOIN Aeropuerto ad ON rc.fk_idAeropuertoDestino = ad.idAeropuerto
+            WHERE a.idAvion = %s
+              AND CONCAT(v.fechaSalida, ' ', v.horaSalida) <= NOW()
+            ORDER BY CONCAT(v.fechaSalida, ' ', v.horaSalida) DESC
+            LIMIT 1;
+        """
+        cursor.execute(query_estado, (id_avion,))
+        estado_result = cursor.fetchone()
+
+        cursor.close()
+
+        return jsonify({
+            "idAvion": id_avion,
+            "millasTotales": millas_result["total_distancia"] if millas_result else 0,
+            "nombreAvion": estado_result["nombreAvion"] if estado_result else "Desconocido",
+            "estado": estado_result["estadoAvion"] if estado_result else "Sin información",
+            "vuelo": f'{estado_result["origen"]} ➝ {estado_result["destino"]}' if estado_result else "N/A"
+        })
+
+    except Exception as e:
+        print(f"❌ Error en detalle_avion: {e}")
+        return jsonify({"error": "Error al obtener detalles del avión"}), 500
+
+
+#--------------------------------------------------------------------------------------------------------------------------------
+
+
 # Ejecutar la consulta al iniciar la aplicación y antes de cada solicitud
 @app.before_request
 def before_request():

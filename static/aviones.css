@@ -1,48 +1,151 @@
+/* Reset básico */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+/* Fondo del body con imagen */
 .body-imagen {
     background: url('/static/images/image6OfiA.jpg') no-repeat center center fixed;
-    background-size: 100% auto; /* Ancho al 150%, alto automático */
+    background-size: 100% auto;
     background-repeat: no-repeat;
     background-position: center;
     height: 100vh;
     width: 100vw;
     margin: 0;
     padding: 0;
+    font-family: Arial, sans-serif;
 }
 
-
-/* Estilos para el contenido */
+/* Contenedor principal de la lista */
 .aviones-container {
     position: relative;
     z-index: 1;
     padding: 20px;
-    color: white; /* Asegura que el texto se vea bien sobre la imagen */
-    font-family: Arial, sans-serif;
-    background-color: rgba(255, 255, 255, 0.316); /* Fondo semitransparente para mejorar la legibilidad */
-    border-radius: 10px;
-    margin: 20px;
+    color: white;
+    background-color: rgba(255, 255, 255, 0.23); /* Más claridad */
+    border-radius: 15px;
+    margin: 40px auto;
+    max-width: 800px;
+    backdrop-filter: blur(6px);
 }
 
-/* Estilo para el título */
+/* Título */
 .aviones-title {
     font-size: 2em;
+    text-align: center;
+    margin-bottom: 20px;
 }
 
-/* Estilos para la lista de aviones */
+/* Lista sin estilos */
 .aviones-list {
     list-style-type: none;
     padding: 0;
 }
 
-/* Estilos para los elementos de la lista de aviones */
-.aviones-item {
-    background-color: rgba(0, 0, 0, 0.7);
-    margin: 5px;
-    padding: 10px;
-    border-radius: 5px;
+/* Botón de cada avión */
+.aviones-btn {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 10px;
+    background-color: rgba(0, 0, 0, 0.75);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
 }
+
+.aviones-btn:hover {
+    background-color: rgba(0, 0, 0, 0.9);
+}
+
+/* Modal */
+.modal {
+    display: none; /* Oculto por defecto */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+    z-index: 999;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Contenido del modal */
+.modal-content {
+    background: #ffffff;
+    color: #333;
+    padding: 30px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 8px 25px rgba(255, 255, 255, 0.189);
+    min-width: 300px;
+    max-width: 90%;
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Botón de cerrar modal */
+.modal-content button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #ff5c00;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s ease;
+}
+
+.modal-content button:hover {
+    background-color: #e64a00;
+}
+
+/* Animación para el modal */
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+
+
+/* Contenedor de botones en forma de grid */
+.aviones-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);  /* 4 elementos por fila */
+    gap: 15px;
+    margin: 0 auto;
+    max-width: 1200px; /* Limita el ancho máximo de la grid */
+}
+
+/* Botón con solo imagen */
+.aviones-btn {
+    width: 80%;  /* Asegura que el botón ocupe todo el espacio disponible */
+    padding: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    overflow: hidden;
+    border-radius: 8px;
+    transition: transform 0.2s ease;
+}
+
+/* Efecto al pasar el mouse sobre el botón */
+.aviones-btn:hover {
+    transform: scale(1.05);
+}
+
+/* Imagen que cubre todo el botón */
+.avion-icon {
+    width: 80%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
