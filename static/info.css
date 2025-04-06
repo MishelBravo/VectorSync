@@ -72,12 +72,12 @@ form {
 
 /* Estilos para el formulario en la tarjeta */
 .info-card {
-    background-color: white;
+    background-color: rgba(255, 255, 255, 0.0); /* Fondo blanco con 80% de opacidad */
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     padding: 15px; /* Reducido padding */
     width: 40%; /* Ajustar el ancho para hacerla más compacta */
-    margin: 15px auto; /* Menos margen */
+    margin: 30px auto;
     height: auto; /* Altura automática */
 }
 
@@ -127,7 +127,7 @@ input, select {
 button[type="submit"] {
     align-self: flex-end; /* Alinea el botón al final */
     padding: 8px 15px; /* Reducir el padding del botón */
-    background-color: #0254b1;
+    background-color: #bf0000;
     color: white;
     border: none;
     border-radius: 4px; /* Menos radio */
@@ -250,3 +250,132 @@ button[type="submit"]:hover {
     pointer-events: none; /* Asegura que no sean interactivos */
 }
 
+
+/* Estilo para la imagen del boleto */
+.boleto-image {
+    width: 200%;          /* Ajusta el ancho de la imagen al 100% del contenedor */
+    max-width: 690px;     /* Máximo ancho de 500px */
+    height: 500px;         /* Mantiene la proporción original de la imagen */
+    border-radius: 8px;   /* Bordes redondeados */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra suave alrededor de la imagen */
+    display: block;       /* Asegura que la imagen sea un bloque, eliminando espacio debajo */
+    margin: -310px auto 310px auto;    /* Sube la imagen 20px más cerca de la parte superior */
+}
+
+/* Estilo adicional: imagen con borde */
+.boleto-image-bordered {
+    border: 3px solid #000; /* Borde negro */
+    padding: 5px;            /* Espacio entre la imagen y el borde */
+}
+
+/* Estilos para el botón */
+.btn-Boleto {
+    position: relative;
+    display: inline-block;
+    width: 110px; /* Ancho ajustado */
+    height: 17px; /* Alto ajustado */
+    padding: 0.2rem; /* Padding ajustado */
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    color: white;
+    font-size: 0.7rem; /* Ajuste de tamaño de texto */
+    background-color: #f41f0383; /* Fondo verde */
+    border-radius: 0.5rem; /* Bordes redondeados */
+    cursor: pointer;
+    border: none;
+    overflow: hidden;
+    transition: .5s;
+    margin-top: 0.5vw;
+    margin-left: 1px; /* Empuja el botón hacia la derecha */
+}
+
+.btn-Boleto:hover {
+    background-color: #f40303; /* Cambio de color al hacer hover */
+    color: #050801;
+    box-shadow: 0 0 5px #f40303,
+                0 0 25px #f40303,
+                0 0 50px #f40303,
+                0 0 300px #f40303;
+    -webkit-box-reflect: below 1px linear-gradient(transparent, #0005);
+}
+
+/* Animación de bordes */
+.btn-Boleto span {
+    position: absolute;
+    display: block;
+}
+
+.btn-Boleto span:nth-child(1) {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #f40303);
+    animation: animate1 1s infinite;
+}
+
+@keyframes animate1 {
+    0% {
+        left: -100%;
+    }
+    100% {
+        left: 100%;
+    }
+}
+
+.btn-Boleto span:nth-child(2) {
+    top: -100%;
+    right: 0;
+    width: 1px;
+    height: 100%;
+    background: linear-gradient(180deg, transparent, #f40303);
+    animation: animate2 1s infinite;
+    animation-delay: .25s;
+}
+
+@keyframes animate2 {
+    0% {
+        top: -100%;
+    }
+    100% {
+        top: 100%;
+    }
+}
+
+.btn-Boleto span:nth-child(3) {
+    bottom: 0;
+    right: 0;
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(270deg, transparent, #f40303);
+    animation: animate3 1s infinite;
+    animation-delay: .5s;
+}
+
+@keyframes animate3 {
+    0% {
+        right: -100%;
+    }
+    100% {
+        right: 100%;
+    }
+}
+
+.btn-Boleto span:nth-child(4) {
+    bottom: -100%;
+    left: 0;
+    width: 1px;
+    height: 100%;
+    background: linear-gradient(360deg, transparent, #f40303);
+    animation: animate4 1s infinite;
+    animation-delay: .75s;
+}
+
+@keyframes animate4 {
+    0% {
+        bottom: -100%;
+    }
+    100% {
+        bottom: 100%;
+    }
+}
