@@ -48,28 +48,42 @@
             <span style="--i:21;"></span>
         </div>
 
-        <!-- Card de Asientos -->
-        <div class="card seats-card">
-            <div class="seats">
-                {% for asiento in vuelo_info %}
-                    <button class="seat 
-                        {% if asiento[11] == 'Libre' %} seat-libre 
-                        {% elif asiento[11] == 'Reserva' %} seat-reserva 
-                        {% elif asiento[11] == 'Venta' %} seat-venta 
-                        {% else %} seat-ocupado 
-                        {% endif %}"
-                            id="asiento-{{ asiento[9] }}"  
-                            data-id="{{ asiento[9] }}"            
-                            data-numero="{{ asiento[10] }}"        
-                            data-precio="{{ asiento[14] }}"       
-                            data-categoria="{{ asiento[13] }}"    
-                            data-estado="{{ asiento[11] }}"       
-                            onclick="seleccionarAsiento(this)">
-                        {{ asiento[10] }}
-                    </button>
-                {% endfor %}
+         <!-- Card de Asientos -->
+         <div class="card seats-card">
+            <div class="seats-wrapper">
+                <div class="seats">
+                    <!-- Letras A-F a la izquierda -->
+                    {% for fila in range(6) %}
+                        <div class="row-label">{{ "ABCDEF"[fila] }}</div>
+                        
+                        {% for columna in range(40) %}
+                            {% set idx = fila * 40 + columna %}
+                            
+                            {% if idx < vuelo_info|length %}
+                                <button class="seat 
+                                    {% if vuelo_info[idx][11] == 'Libre' %} seat-libre 
+                                    {% elif vuelo_info[idx][11] == 'Reserva' %} seat-reserva 
+                                    {% elif vuelo_info[idx][11] == 'Venta' %} seat-venta 
+                                    {% else %} seat-ocupado 
+                                    {% endif %}"
+                                    id="asiento-{{ vuelo_info[idx][9] }}"  
+                                    data-id="{{ vuelo_info[idx][9] }}"            
+                                    data-numero="{{ vuelo_info[idx][10] }}"        
+                                    data-precio="{{ vuelo_info[idx][14] }}"       
+                                    data-categoria="{{ vuelo_info[idx][13] }}"    
+                                    data-estado="{{ vuelo_info[idx][11] }}"       
+                                    onclick="seleccionarAsiento(this)">
+                                    {{ vuelo_info[idx][10] }} <!-- Número de avión -->
+                                </button>
+                            {% else %}
+                                <button class="seat disabled"></button>
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                </div>
             </div>
         </div>
+
 
         
         <img src="/static/images/avion (2).png" alt="Avión" class="seats-image">

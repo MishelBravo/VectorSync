@@ -156,3 +156,97 @@ button[type="submit"]:hover {
 .seat-ocupado {
     background-color: grey;
 }
+
+/*ESPACIO DE LOS ASIENTOS*/
+
+/* Contenedor externo con scroll horizontal */
+.seats-wrapper {
+    overflow-x: auto;
+    padding: 10px;
+}
+
+/* Grid principal: 1 columna para letras + 40 columnas de asientos */
+.seats {
+    display: grid;
+    grid-template-columns: 20px repeat(40, 1fr); /* 1 columna para letras */
+    grid-template-rows: repeat(6, auto); /* 6 filas */
+    gap: 2px;
+    justify-items: center;
+    align-items: center;
+    width: max-content;
+}
+
+/* Etiqueta de fila (A-F) */
+.row-label {
+    font-weight: bold;
+    font-size: 0.6rem;
+    text-align: center;
+    align-self: center;
+}
+
+/* Estilo de asiento */
+.seat {
+    width: 15px;
+    height: 19px;
+    background-color: #f0f0f0;
+    border: none;
+    border-radius: 2px;
+    font-size: 0.5rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+/* Estado de los asientos */
+.seat-libre {
+    background-color: #1c64ff;
+}
+
+.seat-reserva {
+    background-color: yellow;
+}
+
+.seat-venta {
+    background-color: #3ff339;
+}
+
+.seat-ocupado {
+    background-color: grey;
+}
+
+/* Hover */
+.seat:hover {
+    opacity: 0.8;
+}
+
+/* Asiento desactivado */
+.seat.disabled {
+    background-color: #ddd;
+    cursor: not-allowed;
+}
+
+/* Espacios vacíos entre filas y columnas */
+.empty-seat {
+    width: 13px;
+    height: 13px;
+    background-color: transparent;
+    border: none;
+    pointer-events: none;
+}
+
+.empty-row {
+    height: 13px;
+}
+
+/* Espacios vacíos entre filas y columnas */
+.empty-seat {
+    width: 13px; /* Mantiene el tamaño consistente con los asientos */
+    height: 13px;
+    background-color: transparent; /* No tiene color */
+    border: none;
+    pointer-events: none; /* Asegura que no sean interactivos */
+}
+
