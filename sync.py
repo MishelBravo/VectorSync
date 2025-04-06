@@ -55,7 +55,8 @@ tables = [
     'destino',
     'pais',
     'pasajero',
-    'rutacomercial'
+    'rutacomercial',
+    'servidores'
 ]
 
 # Ejecutar sincronización para todas las tablas

@@ -86,7 +86,7 @@ def home():
 
     return render_template('index.html', airports=airports)
 
-
+#----------------------------------------------------------------------------------------------------------
 
 @app.route('/connect', methods=['POST'])
 def connect():
@@ -101,28 +101,47 @@ def connect():
 
     response = {"message": ""}
 
-    # Determinar a qué servidor conectar
     if continent in ["Europa", "Asia", "África"]:
-        # Conectar a MySQL (dbaeropuerto_a)
-        response["message"] = f"Conectado a dbaeropuerto_a en (MYSQL-Europa) ({continent})."
-        connect_to_dbA()  # Conectar a dbaeropuerto_a
+        servidor = "dbaeropuerto_a"
+        response["message"] = f"Conectado a {servidor} en (MYSQL-Europa) ({continent})."
+        connect_to_dbA()
+        guardar_servidor(servidor)
 
     elif continent == "Norteamérica":
-        # Conectar a Firebase (dbaeropuerto_b)
-        response["message"] = "Conectado a dbaeropuerto_b en Firebase (Norteamérica)."
-        connect_to_dbA()  # Conectar a dbaeropuerto_b
+        servidor = "dbaeropuerto_b"
+        response["message"] = f"Conectado a {servidor} en Firebase (Norteamérica)."
+        connect_to_dbA()
+        guardar_servidor(servidor)
 
     elif continent == "Sudamérica":
-        # Conectar a MySQL (dbaeropuerto_c)
-        response["message"] = "Conectado a dbaeropuerto_c en MySQL (Sudamérica)."
-        connect_to_dbA()  # Conectar a dbaeropuerto_c
+        servidor = "dbaeropuerto_c"
+        response["message"] = f"Conectado a {servidor} en MySQL (Sudamérica)."
+        connect_to_dbA()
+        guardar_servidor(servidor)
 
     else:
         response["message"] = "No hay servidores disponibles para este continente."
 
     return jsonify(response)
 
+#----------------------------------------------------------------------------------------------------------
+def guardar_servidor(nombre_servidor):
+    try:
+        if db_connection is None or not db_connection.is_connected():
+            connect_to_dbA()
 
+        cursor = db_connection.cursor()
+        query = "INSERT INTO servidores (nombreServidor) VALUES (%s)"
+        cursor.execute(query, (nombre_servidor,))
+        db_connection.commit()
+        cursor.close()
+        print(f"✅ Servidor '{nombre_servidor}' guardado en la base de datos.")
+    except Error as e:
+        print(f"❌ Error al guardar el servidor: {e}")
+
+
+
+#----------------------------------------------------------------------------------------------------------
 # Ejecutar la consulta
 def execute_query_and_print():
     try:
