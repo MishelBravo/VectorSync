@@ -20,30 +20,31 @@ body {
 .bubbles {
     position: relative;
     display: flex;
+    z-index: -2;
 }
 
 .bubbles span {
     position: relative;
     width: 30px;
     height: 30px;
-    background: linear-gradient(45deg, #ff9d00, #ff5c00, #ff2200); /* Fuego: tonos de naranja, rojo y amarillo */
+    background: linear-gradient(45deg, #ff9d00a0, #ff5e0092, #ff220093); /* Fuego: tonos de naranja, rojo y amarillo */
     margin: 0 4px;
     border-radius: 50%;
     box-shadow: 
-        0 0 0 10px rgba(255, 140, 0, 0.3),  /* Humo amarillo */
-        0 0 50px rgba(255, 60, 0, 0.6),    /* Humo naranja */
-        0 0 100px rgba(255, 20, 0, 0.9);    /* Humo rojo */
+        0 0 0 10px rgba(255, 140, 0, 0.215),  /* Humo amarillo */
+        0 0 50px rgba(255, 60, 0, 0.296),    /* Humo naranja */
+        0 0 100px rgba(255, 21, 0, 0.349);    /* Humo rojo */
     animation: animate 15s linear infinite;
     animation-duration: calc(125s / var(--i)); /* Controlar velocidad según el índice de cada burbuja */
 }
 
 /* Modificación para las burbujas impares (pueden tener un color más cálido o brillante) */
 .bubbles span:nth-child(even) {
-    background: linear-gradient(45deg, #ff2200, #ff6800, #ff9e00); /* Variación de los tonos de fuego */
+    background: linear-gradient(45deg, #ff22007f, #ff66008f, #ff9d008d); /* Variación de los tonos de fuego */
     box-shadow: 
-        0 0 0 10px rgba(255, 50, 0, 0.3), /* Humo más brillante */
-        0 0 50px rgba(255, 100, 0, 0.6), 
-        0 0 100px rgba(255, 150, 0, 0.9); 
+        0 0 0 10px rgba(255, 51, 0, 0.145), /* Humo más brillante */
+        0 0 50px rgba(255, 102, 0, 0.16), 
+        0 0 100px rgba(255, 149, 0, 0.312); 
 }
 
 /* Animación para el movimiento de las burbujas */
