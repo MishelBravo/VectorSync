@@ -504,7 +504,11 @@ def detalle_avion(id_avion):
 
 #--------------------------------------------------------------------------------------------------------------------------------
 
+@app.route('/consultas')
+def consultas():
+    return render_template('Consultas.html')
 
+#--------------------------------------------------------------------------------------------------------------------------------
 # Ejecutar la consulta al iniciar la aplicación y antes de cada solicitud
 @app.before_request
 def before_request():

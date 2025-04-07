@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aviones</title>
+    <link rel="stylesheet" type="text/css" href="/static/consulta.css">
+    
+</head>
+<body class="body-imagen">
+    <div class="card">
+        <div class="left-buttons">
+            <!-- 27 Botones con funciones -->
+            <button onclick="mostrarContenido(1)">Consulta 1</button>
+            <button onclick="mostrarContenido(2)">Consulta 2</button>
+            <button onclick="mostrarContenido(3)">Consulta 3</button>
+            <button onclick="mostrarContenido(4)">Consulta 4</button>
+            <button onclick="mostrarContenido(5)">Consulta 5</button>
+            <button onclick="mostrarContenido(6)">Consulta 6</button>
+            <button onclick="mostrarContenido(7)">Consulta 7</button>
+            <button onclick="mostrarContenido(8)">Consulta 8</button>
+            <button onclick="mostrarContenido(9)">Consulta 9</button>
+            <button onclick="mostrarContenido(10)">Consulta 10</button>
+            <button onclick="mostrarContenido(11)">Consulta 11</button>
+            <button onclick="mostrarContenido(12)">Consulta 12</button>
+            <button onclick="mostrarContenido(13)">Consulta 13</button>
+            <button onclick="mostrarContenido(14)">Consulta 14</button>
+            <button onclick="mostrarContenido(15)">Consulta 15</button>
+            <button onclick="mostrarContenido(16)">Consulta 16</button>
+            <button onclick="mostrarContenido(17)">Consulta 17</button>
+            <button onclick="mostrarContenido(18)">Consulta 18</button>
+            <button onclick="mostrarContenido(19)">Consulta 19</button>
+            <button onclick="mostrarContenido(20)">Consulta 20</button>
+            <button onclick="mostrarContenido(21)">Consulta 21</button>
+            <button onclick="mostrarContenido(22)">Consulta 22</button>
+            <button onclick="mostrarContenido(23)">Consulta 23</button>
+            <button onclick="mostrarContenido(24)">Consulta 24</button>
+            <button onclick="mostrarContenido(25)">Consulta 25</button>
+            <button onclick="mostrarContenido(26)">Consulta 26</button>
+            <button onclick="mostrarContenido(27)">Consulta 27</button>
+        </div>
+        <div class="right-content" id="contenido-derecho">
+            <!-- Aquí aparecerá el contenido dinámico -->
+            <h2>Contenido derecho</h2>
+            <p>Haz clic en un botón para ver su contenido.</p>
+        </div>
+    </div>
+
+    <script>
+        function mostrarContenido(numero) {
+            const contenido = document.getElementById("contenido-derecho");
+            let texto = "";
+
+            switch(numero) {
+                case 1:
+                    texto = "SELECT<br>"
+                            + "    CONCAT(p.nombre, ' ', p.primerApellido, ' ', p.segundoApellido) AS Pasajero,<br>"
+                            + "    YEAR(v.fechaSalida) AS Año,<br>"
+                            + "    COUNT(*) AS VuelosRealizados<br>"
+                            + "FROM db_aeropuerto_a.Pasajero p<br>"
+                            + "JOIN db_aeropuerto_a.Vuelo v ON p.fk_idVuelo = v.idVuelo<br>"
+                            + "WHERE CONCAT(p.nombre, ' ', p.primerApellido, ' ', p.segundoApellido) = 'Luis Aguilar Torrez'<br>"
+                            + "  AND YEAR(v.fechaSalida) = YEAR(CURDATE())<br>"
+                            + "GROUP BY Pasajero, Año;";
+                    break;
+
+                case 2:
+                    texto = "SELECT<br>"
+                                + "    p.nombre AS 'Nombre del pasajero',<br>"
+                                + "    p.primerApellido AS 'Primer Apellido',<br>"
+                                + "    p.segundoApellido AS 'Segundo Apellido',<br>"
+                                + "    a.numeroAsiento AS 'Número de asiento',<br>"
+                                + "    v.idVuelo AS 'ID del vuelo',<br>"
+                                + "    av.nombreAvion AS 'Avión'<br>"
+                                + "FROM db_aeropuerto_a.Pasajero p<br>"
+                                + "JOIN db_aeropuerto_a.Vuelo v ON p.fk_idVuelo = v.idVuelo<br>"
+                                + "JOIN db_aeropuerto_a.Avion av ON v.Avion_idAvion = av.idAvion<br>"
+                                + "JOIN db_aeropuerto_a.Asiento a ON a.fk_idAvion = av.idAvion<br>"
+                                + "WHERE v.idVuelo = 1;<br>";
+                    break;
+
+                case 3:
+                    texto = "SELECT<br>"
+                            + "    p.nombre AS 'Pasajero',<br>"
+                            + "    p.primerApellido,<br>"
+                            + "    p.segundoApellido,<br>"
+                            + "    v.idVuelo,<br>"
+                            + "    v.fechaSalida,<br>"
+                            + "    v.horaSalida,<br>"
+                            + "    a.nombreAvion,<br>"
+                            + "    a.tipoAvion,<br>"
+                            + "    r.idRutaComercial,<br>"
+                            + "    rfk1.descripcion AS 'Origen',<br>"
+                            + "    rfk2.descripcion AS 'Destino',<br>"
+                            + "    asn.numeroAsiento,<br>"
+                            + "    asn.estado AS 'EstadoAsiento',<br>"
+                            + "    c.nombreCategoria,<br>"
+                            + "    c.precioAsiento<br>"
+                            + "FROM <br>"
+                            + "    db_aeropuerto_a.Pasajero p<br>"
+                            + "JOIN <br>"
+                            + "    db_aeropuerto_a.Vuelo v ON p.fk_idVuelo = v.idVuelo<br>"
+                            + "JOIN <br>"
+                            + "    db_aeropuerto_a.RutaComercial r ON v.RutaComercial_idRutaComercial = r.idRutaComercial<br>"
+                            + "JOIN <br>"
+                            + "    db_aeropuerto_a.Aeropuerto rfk1 ON r.fk_idAeropuertoOrigen = rfk1.idAeropuerto<br>"
+                            + "JOIN <br>"
+                            + "    db_aeropuerto_a.Aeropuerto rfk2 ON r.fk_idAeropuertoDestino = rfk2.idAeropuerto<br>"
+                            + "JOIN <br>"
+                            + "    db_aeropuerto_a.Avion a ON v.Avion_idAvion = a.idAvion<br>"
+                            + "JOIN <br>"
+                            + "    db_aeropuerto_a.Asiento asn ON asn.fk_idAvion = a.idAvion<br>"
+                            + "JOIN <br>"
+                            + "    db_aeropuerto_a.Categoria c ON asn.fk_idCategoria = c.idCategoria<br>"
+                            + "WHERE <br>"
+                            + "    p.nombre = 'Luis' <br>"
+                            + "    AND p.primerApellido = 'Aguilar' <br>"
+                            + "    AND p.segundoApellido = 'Torrez';<br>";
+                    break;
+                case 4:
+                    texto = "SELECT<br>"
+                            + "    c.nombreCategoria AS Categoria,<br>"
+                            + "    COUNT(a.idAsiento) AS AsientosVendidos,<br>"
+                            + "    SUM(c.precioAsiento) AS IngresosGenerados<br>"
+                            + "FROM db_aeropuerto_a.Asiento a<br>"
+                            + "JOIN db_aeropuerto_a.Categoria c ON a.fk_idCategoria = c.idCategoria<br>"
+                            + "JOIN db_aeropuerto_a.Vuelo v ON a.fk_idAvion = v.Avion_idAvion<br>"
+                            + "WHERE v.idVuelo = 1<br>"
+                            + "  AND a.estado = 'Venta'<br>"
+                            + "GROUP BY c.idCategoria<br>"
+                            + "ORDER BY c.nombreCategoria<br>"
+                            + "LIMIT 0, 1000;";
+                    break;
+                case 5:
+                    texto = "SELECT<br>"
+                            + "    ae.nombreAerolinea AS Aerolinea,<br>"
+                            + "    CONCAT('Q', QUARTER(v.fechaSalida), ' ', YEAR(v.fechaSalida)) AS Timestre,<br>"
+                            + "    SUM(c.precioAsiento) AS TotalIngresos<br>"
+                            + "FROM db_aeropuerto_a.Asiento a<br>"
+                            + "JOIN db_aeropuerto_a.Categoria c ON a.fk_idCategoria = c.idCategoria<br>"
+                            + "JOIN db_aeropuerto_a.Vuelo v ON a.fk_idAvion = v.Avion_idAvion<br>"
+                            + "JOIN db_aeropuerto_a.Aerolinea ae ON v.Aerolinea_idAerolinea = ae.idAerolinea<br>"
+                            + "WHERE a.estado = 'Venta'<br>"
+                            + "  AND v.fechaSalida BETWEEN '2025-01-01' AND '2025-12-31'<br>"
+                            + "  AND ae.idAerolinea = 1<br>"
+                            + "GROUP BY ae.nombreAerolinea, Timestre<br>"
+                            + "ORDER BY Timestre;";
+                    break;
+                case 6:
+                    texto = "SELECT<br>"
+                            + "    c.nombreCategoria AS Clase,<br>"
+                            + "    SUM(c.precioAsiento) AS IngresoGenerado<br>"
+                            + "FROM db_aeropuerto_a.Pasajero p<br>"
+                            + "JOIN db_aeropuerto_a.Vuelo v ON p.fk_idVuelo = v.idVuelo<br>"
+                            + "JOIN db_aeropuerto_a.Asiento a ON a.fk_idAvion = v.Avion_idAvion<br>"
+                            + "JOIN db_aeropuerto_a.Categoria c ON a.fk_idCategoria = c.idCategoria<br>"
+                            + "JOIN db_aeropuerto_a.Aerolinea ae ON v.Aerolinea_idAerolinea = ae.idAerolinea<br>"
+                            + "WHERE p.nombre = 'Luis'<br>"
+                            + "  AND p.primerApellido = 'Aguilar'<br>"
+                            + "  AND p.segundoApellido = 'Torrez'<br>"
+                            + "GROUP BY c.nombreCategoria;";
+                    break;
+                case 7:
+                    texto = "SELECT<br>"
+                            + "    s.nombreServidor AS Servidor,<br>"
+                            + "    COUNT(*) AS TotalRegistros<br>"
+                            + "FROM db_aeropuerto_a.servidores s<br>"
+                            + "GROUP BY s.nombreServidor<br>"
+                            + "ORDER BY TotalRegistros DESC;";
+                    break;
+                case 8:
+                    texto = "SELECT<br>"
+                            + "    SUM(rc.distancia_aproximada) AS total_millas_recorridas<br>"
+                            + "FROM db_aeropuerto_a.Vuelo v<br>"
+                            + "JOIN db_aeropuerto_a.RutaComercial rc ON v.RutaComercial_idRutaComercial = rc.idRutaComercial<br>"
+                            + "JOIN db_aeropuerto_a.Aerolinea a ON v.Aerolinea_idAerolinea = a.idAerolinea<br>"
+                            + "WHERE a.idAerolinea = 1;<br>";
+                    break;
+                case 9:
+                    texto = "SELECT<br>"
+                            + "    COUNT(*) AS VuelosAterrizados<br>"
+                            + "FROM db_aeropuerto_a.Vuelo v<br>"
+                            + "JOIN db_aeropuerto_a.RutaComercial rc ON v.RutaComercial_idRutaComercial = rc.idRutaComercial<br>"
+                            + "JOIN db_aeropuerto_a.Aeropuerto a ON rc.fk_idAeropuertoDestino = a.idAeropuerto<br>"
+                            + "WHERE a.descripcion = 'CDMX(MEX)'<br>"
+                            + "AND v.fechaSalida BETWEEN '2025-01-01' AND '2025-05-18';<br>";
+                    break;
+                case 10:
+                    texto = "SELECT<br>"
+                            + "    v.idVuelo AS CodigoVuelo,<br>"
+                            + "    SUM(CASE WHEN c.nombreCategoria = 'Clase Ejecutiva' THEN 1 ELSE 0 END) AS Ejecutiva,<br>"
+                            + "    SUM(CASE WHEN c.nombreCategoria = 'Clase Económica' THEN 1 ELSE 0 END) AS Economica,<br>"
+                            + "    SUM(CASE WHEN c.nombreCategoria = 'Primera Clase' THEN 1 ELSE 0 END) AS PrimeraClase,<br>"
+                            + "    COUNT(a.idAsiento) AS TotalBoletos<br>"
+                            + "FROM <br>"
+                            + "    db_aeropuerto_a.Vuelo v<br>"
+                            + "JOIN <br>"
+                            + "    db_aeropuerto_a.Asiento a ON v.idVuelo = a.fk_idAvion<br>"
+                            + "JOIN <br>"
+                            + "    db_aeropuerto_a.Categoria c ON a.fk_idCategoria = c.idCategoria<br>"
+                            + "GROUP BY <br>"
+                            + "    v.idVuelo;<br>";
+                    break;
+                case 11:
+                    texto = "SELECT<br>"
+                            + "    v.Avion_idAvion AS idAvion,<br>"
+                            + "    a.nombreAvion AS NombreAvion,<br>"
+                            + "    SUM(rc.distancia_aproximada) AS total_distancia<br>"
+                            + "FROM vuelo v<br>"
+                            + "JOIN RutaComercial rc ON v.RutaComercial_idRutaComercial = rc.idRutaComercial<br>"
+                            + "JOIN db_aeropuerto_a.Avion a ON v.Avion_idAvion = a.idAvion<br>"
+                            + "WHERE<br>"
+                            + "    v.fechaSalida BETWEEN '2025-01-01' AND '2025-12-31'<br>"
+                            + "GROUP BY v.Avion_idAvion, a.nombreAvion<br>"
+                            + "ORDER BY total_distancia DESC<br>"
+                            + "LIMIT 10;<br>";
+                    break;
+                case 12:
+                    texto = "SELECT<br>"
+                            + "    CONCAT(ao.descripcion, ' - ', ad.descripcion) AS Ruta,<br>"
+                            + "    COUNT(p.idPasajero) AS PasajesVendidos,<br>"
+                            + "    SUM(c.precioAsiento) AS TotalRecaudado<br>"
+                            + "FROM <br>"
+                            + "    Pasajero p<br>"
+                            + "JOIN <br>"
+                            + "    Vuelo v ON p.fk_idVuelo = v.idVuelo<br>"
+                            + "JOIN <br>"
+                            + "    RutaComercial r ON v.RutaComercial_idRutaComercial = r.idRutaComercial<br>"
+                            + "JOIN <br>"
+                            + "    Aeropuerto ao ON r.fk_idAeropuertoOrigen = ao.idAeropuerto<br>"
+                            + "JOIN <br>"
+                            + "    Aeropuerto ad ON r.fk_idAeropuertoDestino = ad.idAeropuerto<br>"
+                            + "JOIN <br>"
+                            + "    Asiento a ON v.Avion_idAvion = a.fk_idAvion<br>"
+                            + "JOIN <br>"
+                            + "    Categoria c ON a.fk_idCategoria = c.idCategoria<br>"
+                            + "WHERE <br>"
+                            + "    a.estado = 'Venta'<br>"
+                            + "GROUP BY <br>"
+                            + "    Ruta<br>"
+                            + "ORDER BY <br>"
+                            + "    TotalRecaudado DESC<br>"
+                            + "LIMIT 10;<br>";
+                    break;
+                case 13:
+                    texto = "SELECT<br>"
+                            + "    a.nombreAvion AS MatriculaAvion,<br>"
+                            + "    CONCAT(v.fechaSalida, ' ', v.horaSalida) AS Fecha,<br>"
+                            + "    CASE <br>"
+                            + "        WHEN NOW() < CONCAT(v.fechaSalida, ' ', v.horaSalida) THEN 'Salida'<br>"
+                            + "        WHEN NOW() BETWEEN CONCAT(v.fechaSalida, ' ', v.horaSalida) AND CONCAT(v.fechaLlegada, ' ', v.horaLlegada) THEN 'En vuelo'<br>"
+                            + "        ELSE 'Llegada'<br>"
+                            + "    END AS Operacion<br>"
+                            + "FROM Vuelo v<br>"
+                            + "JOIN Avion a ON v.Avion_idAvion = a.idAvion<br>"
+                            + "JOIN Aerolinea ac ON v.Aerolinea_idAerolinea = ac.idAerolinea<br>"
+                            + "JOIN RutaComercial rc ON v.RutaComercial_idRutaComercial = rc.idRutaComercial<br>"
+                            + "JOIN Aeropuerto ao ON rc.fk_idAeropuertoOrigen = ao.idAeropuerto<br>"
+                            + "JOIN Aeropuerto ad ON rc.fk_idAeropuertoDestino = ad.idAeropuerto<br>"
+                            + "WHERE (ao.descripcion = 'ATL(USA)' OR ad.descripcion = 'ATL(USA)')<br>"
+                            + "    AND MONTH(v.fechaSalida) = MONTH(CURRENT_DATE())<br>"
+                            + "    AND YEAR(v.fechaSalida) = YEAR(CURRENT_DATE())<br>"
+                            + "ORDER BY v.fechaSalida, v.horaSalida;<br>";
+                    break;
+                case 14:
+                    texto = "SELECT<br>"
+                            + "    a.nombreAvion AS MatriculaAvion,<br>"
+                            + "    (COUNT(s.idAsiento) - SUM(CASE WHEN s.estado = 'Reserva' THEN 1 ELSE 0 END)) AS AsientosDisponibles,<br>"
+                            + "    SUM(CASE WHEN s.estado = 'Reserva' THEN 1 ELSE 0 END) AS AsientosReservados<br>"
+                            + "FROM <br>"
+                            + "    db_aeropuerto_a.Vuelo v<br>"
+                            + "JOIN <br>"
+                            + "    db_aeropuerto_a.Avion a ON v.Avion_idAvion = a.idAvion<br>"
+                            + "JOIN <br>"
+                            + "    db_aeropuerto_a.Asiento s ON s.fk_idAvion = a.idAvion<br>"
+                            + "WHERE <br>"
+                            + "    v.estado != 'Realizado'  -- Asegúrate de que el vuelo no haya sido realizado<br>"
+                            + "GROUP BY <br>"
+                            + "    a.nombreAvion<br>"
+                            + "HAVING <br>"
+                            + "    AsientosDisponibles > AsientosReservados  -- Solo vuelos con asientos no ocupados completamente<br>"
+                            + "ORDER BY <br>"
+                            + "    a.nombreAvion;<br>";
+                    break;
+                case 15:
+                    texto = "SELECT<br>"
+                            + "    a.nombreAvion AS MatriculaAvion,<br>"
+                            + "    SUM(CASE WHEN c.nombreCategoria = 'Clase Ejecutiva' THEN 1 ELSE 0 END) AS Ejecutiva,<br>"
+                            + "    SUM(CASE WHEN c.nombreCategoria = 'Clase Económica' THEN 1 ELSE 0 END) AS Economica,<br>"
+                            + "    SUM(CASE WHEN c.nombreCategoria = 'Primera Clase' THEN 1 ELSE 0 END) AS PrimeraClase,<br>"
+                            + "    COUNT(s.idAsiento) AS CapacidadTotal<br>"
+                            + "FROM<br>"
+                            + "    db_aeropuerto_a.Avion a<br>"
+                            + "JOIN<br>"
+                            + "    db_aeropuerto_a.Asiento s ON s.fk_idAvion = a.idAvion<br>"
+                            + "JOIN<br>"
+                            + "    db_aeropuerto_a.Categoria c ON c.idCategoria = s.fk_idCategoria<br>"
+                            + "GROUP BY<br>"
+                            + "    a.idAvion<br>"
+                            + "ORDER BY<br>"
+                            + "    CapacidadTotal DESC<br>"
+                            + "LIMIT 5;<br>";
+                    break;
+                case 16:
+                    texto = "SELECT<br>"
+                            + "    p.nombre AS NombrePasajero,<br>"
+                            + "    COUNT(v.idVuelo) AS VecesEnEjecutiva<br>"
+                            + "FROM<br>"
+                            + "    db_aeropuerto_a.Pasajero p<br>"
+                            + "JOIN<br>"
+                            + "    db_aeropuerto_a.Vuelo v ON p.fk_idVuelo = v.idVuelo<br>"
+                            + "JOIN<br>"
+                            + "    db_aeropuerto_a.Asiento a ON a.fk_idAvion = v.Avion_idAvion<br>"
+                            + "JOIN<br>"
+                            + "    db_aeropuerto_a.Categoria c ON c.idCategoria = a.fk_idCategoria<br>"
+                            + "WHERE<br>"
+                            + "    c.nombreCategoria = 'Clase Ejecutiva'<br>"
+                            + "GROUP BY<br>"
+                            + "    p.nombre<br>"
+                            + "ORDER BY<br>"
+                            + "    VecesEnEjecutiva DESC;<br>";
+                    break;
+                case 17:
+                    texto = "SELECT<br>"
+                            + "    v.fechaSalida,<br>"
+                            + "    CONCAT(ao.descripcion, ' - ', ad.descripcion) AS operacion<br>"
+                            + "FROM<br>"
+                            + "    Vuelo v<br>"
+                            + "JOIN<br>"
+                            + "    Avion a ON v.Avion_idAvion = a.idAvion<br>"
+                            + "JOIN<br>"
+                            + "    RutaComercial rc ON v.RutaComercial_idRutaComercial = rc.idRutaComercial<br>"
+                            + "JOIN<br>"
+                            + "    Aeropuerto ao ON rc.fk_idAeropuertoOrigen = ao.idAeropuerto<br>"
+                            + "JOIN<br>"
+                            + "    Aeropuerto ad ON rc.fk_idAeropuertoDestino = ad.idAeropuerto<br>"
+                            + "WHERE<br>"
+                            + "    a.idAvion = 1<br>"
+                            + "ORDER BY<br>"
+                            + "    v.fechaSalida;<br>";
+                    break;
+                case 18:
+                    texto = "SELECT<br>"
+                            + "    c.nombreCiudad AS Destino,<br>"
+                            + "    COUNT(p.idPasajero) AS PasajesVendidos<br>"
+                            + "FROM<br>"
+                            + "    db_aeropuerto_a.Pasajero p<br>"
+                            + "JOIN<br>"
+                            + "    db_aeropuerto_a.Vuelo v ON p.fk_idVuelo = v.idVuelo<br>"
+                            + "JOIN<br>"
+                            + "    db_aeropuerto_a.RutaComercial rc ON v.RutaComercial_idRutaComercial = rc.idRutaComercial<br>"
+                            + "JOIN<br>"
+                            + "    db_aeropuerto_a.Aeropuerto ao ON rc.fk_idAeropuertoOrigen = ao.idAeropuerto<br>"
+                            + "JOIN<br>"
+                            + "    db_aeropuerto_a.Aeropuerto ad ON rc.fk_idAeropuertoDestino = ad.idAeropuerto<br>"
+                            + "JOIN<br>"
+                            + "    db_aeropuerto_a.Destino d ON ad.fk_idDestino = d.idDestino<br>"
+                            + "JOIN<br>"
+                            + "    db_aeropuerto_a.Ciudad c ON d.fk_idCiudad = c.idCiudad<br>"
+                            + "WHERE<br>"
+                            + "    v.Aerolinea_idAerolinea = 1<br>"
+                            + "GROUP BY<br>"
+                            + "    c.nombreCiudad<br>"
+                            + "ORDER BY<br>"
+                            + "    PasajesVendidos DESC<br>"
+                            + "LIMIT 1;<br>";
+                    break;
+                case 19:
+                    texto = "SELECT<br>"
+                            + "    a.nombreAvion AS Nombre,<br>"
+                            + "    SUM(CASE WHEN c.nombreCategoria = 'Clase Ejecutiva' THEN 1 ELSE 0 END) AS Ejecutiva,<br>"
+                            + "    SUM(CASE WHEN c.nombreCategoria = 'Clase Económica' THEN 1 ELSE 0 END) AS Economica,<br>"
+                            + "    SUM(CASE WHEN c.nombreCategoria = 'Primera Clase' THEN 1 ELSE 0 END) AS PrimeraClase,<br>"
+                            + "    COUNT(*) AS Total<br>"
+                            + "FROM<br>"
+                            + "    db_aeropuerto_a.Asiento asiento<br>"
+                            + "JOIN<br>"
+                            + "    db_aeropuerto_a.Avion a ON asiento.fk_idAvion = a.idAvion<br>"
+                            + "JOIN<br>"
+                            + "    db_aeropuerto_a.Categoria c ON asiento.fk_idCategoria = c.idCategoria<br>"
+                            + "JOIN<br>"
+                            + "    db_aeropuerto_a.Pasajero p ON p.fk_idVuelo = asiento.fk_idAvion<br>"
+                            + "JOIN<br>"
+                            + "    db_aeropuerto_a.Vuelo v ON p.fk_idVuelo = v.idVuelo<br>"
+                            + "WHERE<br>"
+                            + "    v.fechaSalida BETWEEN '2025-01-01' AND '2025-12-31'<br>"
+                            + "GROUP BY<br>"
+                            + "    a.nombreAvion<br>"
+                            + "ORDER BY<br>"
+                            + "    Total DESC;<br>";
+                    break;
+                case 20:
+                    texto = "SELECT<br>"
+                            + "    CONCAT(ao.descripcion, ' (', p.nombrePais, ')') AS origen,<br>"
+                            + "    CONCAT(ad.descripcion, ' (', pd.nombrePais, ')') AS destino,<br>"
+                            + "    CONCAT(ROUND(<br>"
+                            + "        (COUNT(pa.idPasajero) / <br>"
+                            + "        (SELECT COUNT(*) FROM db_aeropuerto_a.Asiento WHERE fk_idAvion = v.Avion_idAvion) * 100),<br>"
+                            + "        0), '%') AS ocupacion,<br>"
+                            + "    COUNT(pa.idPasajero) AS reservasActivas<br>"
+                            + "FROM<br>"
+                            + "    db_aeropuerto_a.Vuelo v<br>"
+                            + "JOIN<br>"
+                            + "    db_aeropuerto_a.Pasajero pa ON v.idVuelo = pa.fk_idVuelo<br>"
+                            + "JOIN<br>"
+                            + "    db_aeropuerto_a.RutaComercial rc ON v.RutaComercial_idRutaComercial = rc.idRutaComercial<br>"
+                            + "JOIN<br>"
+                            + "    db_aeropuerto_a.Aeropuerto ao ON rc.fk_idAeropuertoOrigen = ao.idAeropuerto<br>"
+                            + "JOIN<br>"
+                            + "    db_aeropuerto_a.Aeropuerto ad ON rc.fk_idAeropuertoDestino = ad.idAeropuerto<br>"
+                            + "JOIN<br>"
+                            + "    db_aeropuerto_a.Destino d ON ao.fk_idDestino = d.idDestino<br>"
+                            + "JOIN<br>"
+                            + "    db_aeropuerto_a.Pais p ON d.fk_idCiudad = p.idPais<br>"
+                            + "JOIN<br>"
+                            + "    db_aeropuerto_a.Destino d2 ON ad.fk_idDestino = d2.idDestino<br>"
+                            + "JOIN<br>"
+                            + "    db_aeropuerto_a.Pais pd ON d2.fk_idCiudad = pd.idPais<br>"
+                            + "GROUP BY<br>"
+                            + "    ao.descripcion,<br>"
+                            + "    p.nombrePais,<br>"
+                            + "    ad.descripcion,<br>"
+                            + "    pd.nombrePais,<br>"
+                            + "    v.Avion_idAvion<br>"
+                            + "ORDER BY<br>"
+                            + "    reservasActivas DESC<br>"
+                            + "LIMIT 0, 1000;<br>";
+                    break;
+                case 21:
+                    texto = "SELECT<br>"
+                            + "    p.pasaporte AS 'Numero Pasaporte',<br>"
+                            + "    COUNT(*) AS 'Reservas No Concretadas'<br>"
+                            + "FROM<br>"
+                            + "    db_aeropuerto_a.Pasajero p<br>"
+                            + "JOIN<br>"
+                            + "    db_aeropuerto_a.Vuelo v ON p.fk_idVuelo = v.idVuelo<br>"
+                            + "WHERE<br>"
+                            + "    v.estado = 'No Concretado'<br>"
+                            + "GROUP BY<br>"
+                            + "    p.pasaporte<br>"
+                            + "HAVING<br>"
+                            + "    COUNT(*) > 3;<br>";
+                    break;
+                case 22:
+                    texto = "SELECT<br>"
+                            + "    CONCAT(Origen.nombreAeropuerto, ' (', Origen.Ciudad.nombrePais, ') - ', Destino.nombreAeropuerto, ' (', Destino.Ciudad.nombrePais, ')') AS Ruta,<br>"
+                            + "    COUNT(DISTINCT d.idDevolucion) AS Devoluciones,<br>"
+                            + "    AVG(DATEDIFF(d.fechaDevolucion, d.fechaReserva)) AS TiempoPromedio<br>"
+                            + "FROM<br>"
+                            + "    db_aeropuerto_a.Devolucion d<br>"
+                            + "JOIN<br>"
+                            + "    db_aeropuerto_a.Vuelo v ON d.fk_idVuelo = v.idVuelo<br>"
+                            + "JOIN<br>"
+                            + "    db_aeropuerto_a.RutaComercial rc ON v.RutaComercial_idRutaComercial = rc.idRutaComercial<br>"
+                            + "JOIN<br>"
+                            + "    db_aeropuerto_a.Aeropuerto Origen ON rc.fk_idAeropuertoOrigen = Origen.idAeropuerto<br>"
+                            + "JOIN<br>"
+                            + "    db_aeropuerto_a.Aeropuerto Destino ON rc.fk_idAeropuertoDestino = Destino.idAeropuerto<br>"
+                            + "GROUP BY<br>"
+                            + "    Ruta<br>"
+                            + "ORDER BY<br>"
+                            + "    Devoluciones DESC;<br>";
+                    break;
+                case 23:
+                    texto = "SELECT<br>"
+                            + "    CONCAT(Origen.descripcion, ' (', PaisOrigen.nombrePais, ') - ', Destino.descripcion, ' (', PaisDestino.nombrePais, ')') AS Ruta,<br>"
+                            + "    AVG(CASE WHEN v.estado = 'Programado' THEN 1 ELSE 0 END) * 100 AS 'Ocupacion Promedio'<br>"
+                            + "FROM<br>"
+                            + "    db_aeropuerto_a.Vuelo v<br>"
+                            + "JOIN<br>"
+                            + "    db_aeropuerto_a.RutaComercial rc ON v.RutaComercial_idRutaComercial = rc.idRutaComercial<br>"
+                            + "JOIN<br>"
+                            + "    db_aeropuerto_a.Aeropuerto Origen ON rc.fk_idAeropuertoOrigen = Origen.idAeropuerto<br>"
+                            + "JOIN<br>"
+                            + "    db_aeropuerto_a.Aeropuerto Destino ON rc.fk_idAeropuertoDestino = Destino.idAeropuerto<br>"
+                            + "JOIN<br>"
+                            + "    db_aeropuerto_a.Ciudad CiudadOrigen ON Origen.fk_idDestino = CiudadOrigen.idCiudad<br>"
+                            + "JOIN<br>"
+                            + "    db_aeropuerto_a.Ciudad CiudadDestino ON Destino.fk_idDestino = CiudadDestino.idCiudad<br>"
+                            + "JOIN<br>"
+                            + "    db_aeropuerto_a.Pais PaisOrigen ON CiudadOrigen.fk_idPais = PaisOrigen.idPais<br>"
+                            + "JOIN<br>"
+                            + "    db_aeropuerto_a.Pais PaisDestino ON CiudadDestino.fk_idPais = PaisDestino.idPais<br>"
+                            + "WHERE<br>"
+                            + "    v.fechaSalida BETWEEN '2025-01-01' AND '2025-12-31'<br>"
+                            + "GROUP BY<br>"
+                            + "    Ruta<br>"
+                            + "HAVING<br>"
+                            + "    `Ocupacion Promedio` > 80<br>"
+                            + "LIMIT<br>"
+                            + "    0, 1000;<br>";
+                    break;
+                case 24:
+                    texto = "SELECT<br>"
+                            + "    p.nombre AS Nombre,<br>"
+                            + "    a.descripcion AS Descripcion_Aeropuerto,<br>"
+                            + "    COUNT(*) AS Ventas_Realizadas,<br>"
+                            + "    CASE<br>"
+                            + "        WHEN ca.nombreCategoria = 'Clase Ejecutiva' THEN 'Ejecutiva'<br>"
+                            + "        WHEN ca.nombreCategoria = 'Clase Económica' THEN 'Económica'<br>"
+                            + "        ELSE 'Desconocida'<br>"
+                            + "    END AS Clase_Preferida<br>"
+                            + "FROM<br>"
+                            + "    db_aeropuerto_a.Pasajero p<br>"
+                            + "JOIN<br>"
+                            + "    db_aeropuerto_a.Vuelo v ON p.fk_idVuelo = v.idVuelo<br>"
+                            + "JOIN<br>"
+                            + "    db_aeropuerto_a.RutaComercial rc ON v.RutaComercial_idRutaComercial = rc.idRutaComercial<br>"
+                            + "JOIN<br>"
+                            + "    db_aeropuerto_a.Aeropuerto a ON rc.fk_idAeropuertoDestino = a.idAeropuerto<br>"
+                            + "JOIN<br>"
+                            + "    db_aeropuerto_a.Ciudad c ON a.fk_idDestino = c.idCiudad<br>"
+                            + "JOIN<br>"
+                            + "    db_aeropuerto_a.Asiento a_s ON v.Avion_idAvion = a_s.fk_idAvion<br>"
+                            + "JOIN<br>"
+                            + "    db_aeropuerto_a.Categoria ca ON a_s.fk_idCategoria = ca.idCategoria<br>"
+                            + "GROUP BY<br>"
+                            + "    p.idPasajero, c.nombreCiudad, ca.nombreCategoria, a.descripcion<br>"
+                            + "ORDER BY<br>"
+                            + "    Ventas_Realizadas DESC<br>"
+                            + "LIMIT 10;<br>";
+                    break;
+                case 25:
+                    texto = "SELECT<br>"
+                            + "    DATE_FORMAT(v.fechaSalida, '%M') AS Mes,<br>"
+                            + "    COUNT(p.idPasajero) AS `Pasajes Vendidos`<br>"
+                            + "FROM<br>"
+                            + "    db_aeropuerto_a.Pasajero p<br>"
+                            + "JOIN<br>"
+                            + "    db_aeropuerto_a.Vuelo v ON p.fk_idVuelo = v.idVuelo<br>"
+                            + "GROUP BY<br>"
+                            + "    YEAR(v.fechaSalida), MONTH(v.fechaSalida), DATE_FORMAT(v.fechaSalida, '%M')<br>"
+                            + "ORDER BY<br>"
+                            + "    MONTH(v.fechaSalida);<br>";
+                    break;
+                case 26:
+                    texto = "UPDATE db_aeropuerto_a.Vuelo v<br>"
+                        + "JOIN (<br>"
+                        + "    SELECT idVuelo<br>"
+                        + "    FROM db_aeropuerto_a.Vuelo<br>"
+                        + "    WHERE DAYOFWEEK(fechaSalida) = 3<br>"
+                        + "    LIMIT 10<br>"
+                        + ") t ON v.idVuelo = t.idVuelo<br>"
+                        + "SET v.fechaSalida = DATE_ADD(v.fechaSalida, INTERVAL (7 - DAYOFWEEK(v.fechaSalida) + 1) DAY);<br>";
+
+                    break;
+                case 27:
+                    texto = "SELECT <br>"
+                        + "    a.nombreAeropuerto AS Aeropuerto,<br>"
+                        + "    MIN(v.horaSalida) AS Primera_Salida,<br>"
+                        + "    MAX(v.horaSalida) AS Ultima_Salida,<br>"
+                        + "    MIN(v.horaLlegada) AS Primer_Llegada,<br>"
+                        + "    MAX(v.horaLlegada) AS Ultima_Llegada<br>"
+                        + "FROM <br>"
+                        + "    db_aeropuerto_a.Aeropuerto a<br>"
+                        + "JOIN <br>"
+                        + "    db_aeropuerto_a.RutaComercial rc ON rc.fk_idAeropuertoOrigen = a.idAeropuerto<br>"
+                        + "JOIN <br>"
+                        + "    db_aeropuerto_a.Vuelo v ON v.RutaComercial_idRutaComercial = rc.idRutaComercial<br>"
+                        + "WHERE <br>"
+                        + "    a.descripcion = 'ATL(USA)'<br>"
+                        + "GROUP BY <br>"
+                        + "    a.nombreAeropuerto;<br>";
+                    break;
+                default:
+                    texto = "Contenido no disponible.";
+            }
+
+            contenido.innerHTML = `<h2>Consulta ${numero}</h2><p>${texto}</p>`;
+        }
+    </script>
+</body>
+</html>
