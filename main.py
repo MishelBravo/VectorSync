@@ -2,6 +2,17 @@ from flask import Flask, request, jsonify, render_template
 import mysql.connector
 from mysql.connector import Error
 from flask import Flask, render_template, request, redirect
+from flask import Flask, jsonify
+from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.events import EVENT_JOB_EXECUTED, EVENT_JOB_ERROR
+import mysql.connector
+from mysql.connector import Error
+from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.events import EVENT_JOB_EXECUTED, EVENT_JOB_ERROR
+from datetime import datetime, timedelta
+import time
+import mysql.connector
+
 
 app = Flask(__name__)
 
@@ -109,7 +120,7 @@ def connect():
 
     elif continent == "Norteamérica":
         servidor = "dbaeropuerto_b"
-        response["message"] = f"Conectado a {servidor} en Firebase (Norteamérica)."
+        response["message"] = f"Conectado a {servidor} en Mongo BD (Norteamérica)."
         connect_to_dbA()
         guardar_servidor(servidor)
 
@@ -509,6 +520,82 @@ def consultas():
     return render_template('Consultas.html')
 
 #--------------------------------------------------------------------------------------------------------------------------------
+# Función que se ejecutará en segundo plano
+def perform_periodic_task():
+    print("Ejecutando tarea periódica...")
+
+    # Conectar a la base de datos
+    connection = connect_to_dbA()
+    if connection is not None:
+        cursor = connection.cursor()
+
+        # Obtener todos los asientos con estado 'Devolucion'
+        query = "SELECT idAsiento, numeroAsiento FROM Asiento WHERE estado = 'Devolucion'"
+        cursor.execute(query)
+        asientos_devolucion = cursor.fetchall()
+
+        if asientos_devolucion:
+            print(f"Se encontraron {len(asientos_devolucion)} asientos en estado 'Devolucion'.")
+
+            # Función para actualizar el estado de cada asiento con un retraso de 2 segundos
+            def update_asiento(asiento_id, asiento_numero):
+                print(f"Esperando 2 segundos para el asiento {asiento_numero} (ID: {asiento_id})...")
+                time.sleep(2)  # Esperar 2 segundos
+                update_query = """
+                    UPDATE Asiento
+                    SET estado = 'Libre', fechaActulizacion = %s
+                    WHERE idAsiento = %s
+                """
+                cursor.execute(update_query, (datetime.now(), asiento_id))
+                print(f"El asiento {asiento_numero} (ID: {asiento_id}) ha sido actualizado a 'Libre'.")
+                connection.commit()
+
+            # Ejecutar la actualización de los asientos de manera secuencial
+            for asiento in asientos_devolucion:
+                asiento_id = asiento[0]
+                asiento_numero = asiento[1]
+                # Esperar 2 segundos antes de actualizar
+                update_asiento(asiento_id, asiento_numero)
+
+            print("Actualización completada para todos los asientos.")
+
+        else:
+            print("No se encontraron asientos en estado 'Devolucion'.")
+
+        cursor.close()
+        connection.close()
+
+        # Esperar 2 segundos antes de volver a ejecutar la tarea
+        time.sleep(2)
+        print("Reiniciando la tarea periódica.")
+
+    else:
+        print("❌ No se pudo conectar a la base de datos")
+
+# Configuración de APScheduler
+def start_scheduler():
+    scheduler = BackgroundScheduler()
+    # Ejecuta la tarea una vez al iniciar el programa
+    scheduler.add_job(perform_periodic_task, 'interval', seconds=2, max_instances=1)  # Ejecuta cada 2 segundos
+    scheduler.start()
+
+    # Manejo de eventos de la tarea
+    def job_listener(event):
+        if event.exception:
+            print(f"❌ Error en la ejecución de la tarea: {event.job_id}")
+        else:
+            print(f"✅ Tarea {event.job_id} ejecutada exitosamente.")
+
+    scheduler.add_listener(job_listener, EVENT_JOB_EXECUTED | EVENT_JOB_ERROR)
+
+# Ruta para ver el estado de la tarea
+@app.route('/status')
+def status():
+    return jsonify({"message": "La tarea periódica está en ejecución."})
+
+
+#--------------------------------------------------------------------------------------------------------------------------------
+
 # Ejecutar la consulta al iniciar la aplicación y antes de cada solicitud
 @app.before_request
 def before_request():
@@ -525,4 +612,5 @@ def before_request():
 
 
 if __name__ == '__main__':
+    start_scheduler()
     app.run(debug=True)
